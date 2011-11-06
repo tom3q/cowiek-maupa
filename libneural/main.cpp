@@ -15,12 +15,6 @@ vector<double> makeVector(int amount, ...) {
 	return result;
 }
 
-void printVector(vector<double>& v) {
-	for (unsigned int i=0; i<v.size(); i++)
-		printf("%0.4f\t", v[i]);
-	printf("\n");
-}
-
 double abs(double a, double b) {
 	return a > b ? a-b : b-a;
 }
@@ -45,25 +39,14 @@ int main() {
 	const double errorDelta = 0.001, deadCount = 10;
 	double lastError = 0, error;
 
-	while ((error = supervisor.totalError()) > 0.01) {
+	while ((error = supervisor.totalError()) > 0.001) {
 		supervisor.train();
 		epochs++;
 
 		if (abs(error, lastError) < errorDelta) {
 			dead++;
 			if (dead == deadCount) {
-				// Tutaj nast¹pi ponowne losowanie krawêdzi, gdy¿ przez
-				// d³u¿szy czas nie poprawi³ siê b³¹d uczenia sieci.
-				// Dodatkowo nale¿y wyczyœciæ dane zgromadzone u supervisora,
-				// poniewa¿ inaczej sieæ ci¹gle bêdzie trwaæ w 'martwym
-				// punkcie'. 
-				//
-				// Mam pewn¹ koncepcjê jak ukryæ koniecznoœæ rêcznego 
-				// czyszczenia danych supervisora i wprawadzê j¹ w ¿ycie
-				// niebawem.
-
 				net.randomizeConnections(5.0);
-				supervisor.buildData();
 				dead = epochs = 0;
 				randomized++;
 			}

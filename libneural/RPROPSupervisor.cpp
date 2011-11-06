@@ -1,27 +1,13 @@
 #include "RPROPSupervisor.h"
 
 RPROPSupervisor::RPROPSupervisor()
-	: trainingSet_(0), net_(0), nMax_(50), nMin_(0.0002), a_(1.2), b_(0.5)
+	: nMax_(50), nMin_(0.0002), a_(1.2), b_(0.5)
 {
 }
 
 RPROPSupervisor::RPROPSupervisor(double min, double max)
-	: trainingSet_(0), net_(0), nMax_(max), nMin_(min)
+	: nMax_(max), nMin_(min)
 {
-}
-
-RPROPSupervisor::~RPROPSupervisor() {
-	if (trainingSet_ != 0)
-		delete trainingSet_;
-}
-
-void RPROPSupervisor::setTrainingSet(TrainingSet& data) {
-	trainingSet_ = new TrainingSet(data);
-}
-
-void RPROPSupervisor::setNeuralNetwork(NeuralNetwork& net) {
-	net_ = &net;
-	buildData();
 }
 
 void RPROPSupervisor::buildData() {
@@ -58,6 +44,13 @@ void RPROPSupervisor::train() {
 	std::vector<double> output;
 	int layerCount = net_->layerCount();
 	double delta, derivative, eps;
+
+	// if network was previously trained by another supervisor, 
+	// one has to reset its data (matrices and stuff).
+	if (!net_->isCurrentSupervisor(this)) {
+		net_->setCurrentSupervisor(this);
+		buildData();
+	}
 
 	// clear error derivative matrices
 	for (int l=0; l<layerCount; l++)
@@ -123,19 +116,4 @@ void RPROPSupervisor::train() {
 			connMatrix.at(x, y) += nMatrix.at(x, y) * sgn(errorMatrix.at(x, y));
 		}
 	}
-}
-
-double RPROPSupervisor::totalError() {
-	std::vector<double> output;
-	double error = 0, d;
-
-	for (int i=0; i<trainingSet_->size(); ++i) {
-		std::vector<double>& desOutput = trainingSet_->getDesiredOutput(i);
-		output = net_->getOutput(trainingSet_->getInput(i));
-		for (unsigned int j=0; j<output.size(); j++) {
-			d = desOutput[j] - output[j];
-			error += d*d;
-		}
-	}
-	return error;
 }

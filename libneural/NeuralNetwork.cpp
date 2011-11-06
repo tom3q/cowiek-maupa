@@ -1,12 +1,13 @@
 #include <windows.h>
 #include <boost\random.hpp>
 #include "NeuralNetwork.h"
+#include "Supervisor.h"
 #include "BipolarFunction.h"
 
 typedef std::vector<Neuron> Neurons;
 
 NeuralNetwork::NeuralNetwork() 
-	: inputCount_(0), prevInputCount_(0) {
+	: inputCount_(0), prevInputCount_(0), supervisor_(0) {
 }
 
 NeuralNetwork::~NeuralNetwork() {
@@ -101,6 +102,14 @@ int NeuralNetwork::outputNeuronCount() const {
 	return layers_[layers_.size()-1].get<1>().size();
 }
 
+bool NeuralNetwork::isCurrentSupervisor(Supervisor *supervisor) {
+	return supervisor_ == supervisor;
+}
+
+void NeuralNetwork::setCurrentSupervisor(Supervisor *supervisor) {
+	supervisor_ = supervisor;
+}
+
 void NeuralNetwork::randomizeConnections(double range) {
 	SYSTEMTIME st;
 	GetSystemTime (&st);
@@ -108,10 +117,15 @@ void NeuralNetwork::randomizeConnections(double range) {
 	boost::random::mt19937 rng(st.wSecond * 100 + st.wMilliseconds);
 	boost::random::uniform_real_distribution<> random(-range, range);
 
+	// randomization
 	for (unsigned int i=0; i<layers_.size(); i++) {
 		Matrix2D& conn = layers_[i].get<0>();
 		for (int x=0; x<conn.getWidth(); x++)
 		for (int y=0; y<conn.getHeight(); y++)
 			conn.at(x, y) = (double) random(rng);
 	}
+
+	// set current supervisor pointer to 0, so that the next time 
+	// a supervisor runs train() it rebuilds its data.
+	supervisor_ = 0;
 }

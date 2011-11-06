@@ -13,6 +13,8 @@
 typedef std::vector<Neuron> Neurons;
 typedef boost::tuple<Matrix2D, Neurons> tuple;
 
+class Supervisor;
+
 class NeuralNetwork
 {
 public:
@@ -28,6 +30,9 @@ public:
 	int layerCount() const;
 	int outputNeuronCount() const;
 
+	bool isCurrentSupervisor(Supervisor *supervisor);
+	void setCurrentSupervisor(Supervisor *supervisor);
+
 	void randomizeConnections(double range);
 
 	// activation funtion types
@@ -37,6 +42,7 @@ public:
 
 private:
 	int inputCount_, prevInputCount_;
+	Supervisor* supervisor_;
 	std::vector<tuple> layers_;
 };
 
