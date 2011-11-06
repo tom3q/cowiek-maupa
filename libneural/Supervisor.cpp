@@ -6,18 +6,20 @@ Supervisor::Supervisor()
 {
 }
 
-Supervisor::~Supervisor() {
-	if (trainingSet_ != 0)
-		delete trainingSet_;
+Supervisor::~Supervisor() 
+{
 }
 
 void Supervisor::setTrainingSet(TrainingSet& data) {
-	trainingSet_ = new TrainingSet(data);
+	trainingSet_ = &data;
 }
 
-void Supervisor::setNeuralNetwork(NeuralNetwork& net) {
-	net_ = &net;
-	buildData();
+void Supervisor::setNeuralNetwork(NeuralNetwork& newNet) {
+	if (!newNet.isCurrentSupervisor(this)) {
+		newNet.setCurrentSupervisor(this);
+		net_ = &newNet;
+		buildData();
+	}
 }
 
 double Supervisor::totalError() {

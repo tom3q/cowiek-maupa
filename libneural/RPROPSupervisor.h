@@ -12,10 +12,11 @@ public:
 	RPROPSupervisor();
 	RPROPSupervisor(double min, double max);
 
-	void buildData();
-	void train();
+	virtual void train();
 
 private:
+	void buildData();
+
 	std::vector<Matrix2D> n_, errorDrv_, prevDrv_;
 	std::vector<std::vector<double> > delta_;
 	double nMax_, nMin_, a_, b_;

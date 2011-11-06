@@ -2,6 +2,8 @@
 #include <boost\random.hpp>
 #include "NeuralNetwork.h"
 #include "Supervisor.h"
+#include "LinearFunction.h"
+#include "UnipolarFunction.h"
 #include "BipolarFunction.h"
 
 typedef std::vector<Neuron> Neurons;

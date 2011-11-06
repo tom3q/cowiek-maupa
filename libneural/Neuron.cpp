@@ -1,4 +1,5 @@
 #include "Neuron.h"
+#include "UnipolarFunction.h"
 
 Neuron::Neuron() {
 	func_ = boost::shared_ptr<ActivationFunction>(new UnipolarFunction());

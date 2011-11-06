@@ -11,14 +11,14 @@ public:
 	virtual ~Supervisor();
 
 	void setTrainingSet(TrainingSet& data);
-	void setNeuralNetwork(NeuralNetwork& net);
+	void setNeuralNetwork(NeuralNetwork& newNet);
 
-	virtual void buildData() = 0;
 	virtual void train() = 0;
-
 	double totalError();
 
 protected:
+	virtual void buildData() = 0;
+
 	TrainingSet* trainingSet_;
 	NeuralNetwork* net_;
 };

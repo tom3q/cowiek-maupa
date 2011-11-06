@@ -7,8 +7,6 @@
 
 #include "Neuron.h"
 #include "Matrix2D.h"
-#include "UnipolarFunction.h"
-#include "LinearFunction.h"
 
 typedef std::vector<Neuron> Neurons;
 typedef boost::tuple<Matrix2D, Neurons> tuple;

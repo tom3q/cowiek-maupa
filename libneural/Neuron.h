@@ -2,7 +2,7 @@
 #define NEURON_H
 
 #include <boost\shared_ptr.hpp>
-#include "UnipolarFunction.h"
+#include "ActivationFunction.h"
 
 class Neuron {
 public: 

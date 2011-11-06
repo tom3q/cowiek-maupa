@@ -25,6 +25,7 @@ int main() {
 	net.addLayer(2, NeuralNetwork::FUNCTION_UNIPOLAR);
 	net.addLayer(1, NeuralNetwork::FUNCTION_UNIPOLAR);
 	
+	// XOR function
 	TrainingSet trainingSet;
 	trainingSet.addData(makeVector(2, 0.0, 0.0), makeVector(1, 0.0));
 	trainingSet.addData(makeVector(2, 0.0, 1.0), makeVector(1, 1.0));
@@ -57,7 +58,7 @@ int main() {
 		}
 	}
 
-	printf("Epochs: %d (randomized %d times)\n\n", epochs, randomized);
+	printf("XOR Exmaple\nEpochs: %d (randomized %d times)\n\n", epochs, randomized);
 	printf("(0.0, 0.0): %0.4f\n", net.getOutput(makeVector(2, 0.0, 0.0))[0]);
 	printf("(0.0, 1.0): %0.4f\n", net.getOutput(makeVector(2, 0.0, 1.0))[0]);
 	printf("(1.0, 0.0): %0.4f\n", net.getOutput(makeVector(2, 1.0, 0.0))[0]);
