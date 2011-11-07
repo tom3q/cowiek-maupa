@@ -5,8 +5,8 @@ RPROPSupervisor::RPROPSupervisor()
 {
 }
 
-RPROPSupervisor::RPROPSupervisor(double min, double max)
-	: nMax_(max), nMin_(min)
+RPROPSupervisor::RPROPSupervisor(double min, double max, double a, double b)
+	: nMax_(max), nMin_(min), a_(a), b_(b)
 {
 }
 
@@ -32,6 +32,7 @@ void RPROPSupervisor::buildData() {
 
 		// add delta vector
 		std::vector<double> v;
+		v.reserve(net_->neurons(i).size());
 		delta_.push_back(v);
 	}
 }
@@ -116,4 +117,36 @@ void RPROPSupervisor::train() {
 			connMatrix.at(x, y) += nMatrix.at(x, y) * sgn(errorMatrix.at(x, y));
 		}
 	}
+}
+
+void RPROPSupervisor::setA(double val) {
+	a_ = val;
+}
+
+void RPROPSupervisor::setB(double val) {
+	b_ = val;
+}
+
+void RPROPSupervisor::setNMin(double val) {
+	nMin_ = val;
+}
+
+void RPROPSupervisor::setNMax(double val) {
+	nMax_ = val;
+}
+
+double RPROPSupervisor::getA() const {
+	return a_;
+}
+
+double RPROPSupervisor::getB() const {
+	return b_;
+}
+
+double RPROPSupervisor::getNMin() const {
+	return nMin_;
+}
+
+double RPROPSupervisor::getNMax() const {
+	return nMax_;
 }
