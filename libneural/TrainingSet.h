@@ -12,6 +12,7 @@ public:
 	Data& getInput(int index);
 	Data& getDesiredOutput(int index);
 	int size();
+	void reserve(size_t);
 
 private:
 	std::vector<Data> inputs_;

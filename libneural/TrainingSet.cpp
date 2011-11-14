@@ -18,4 +18,8 @@ Data& TrainingSet::getDesiredOutput(int index) {
 int TrainingSet::size() {
 	return inputs_.size();
 }
+
+void TrainingSet::reserve(size_t size) {
+	inputs_.reserve(size);
+	outputs_.reserve(size);
 }
