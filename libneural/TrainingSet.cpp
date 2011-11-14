@@ -3,17 +3,19 @@
 typedef std::vector<double> Data;
 
 void TrainingSet::addData(Data &input, Data &desOutput) {
-	data_.push_back(boost::make_tuple(input, desOutput));
+	inputs_.push_back(input);
+	outputs_.push_back(desOutput);
 }
 
 Data& TrainingSet::getInput(int index) {
-	return data_[index].get<0>();
+	return inputs_[index];
 }
 
 Data& TrainingSet::getDesiredOutput(int index) {
-	return data_[index].get<1>();
+	return outputs_[index];
 }
 
 int TrainingSet::size() {
-	return data_.size();
+	return inputs_.size();
+}
 }

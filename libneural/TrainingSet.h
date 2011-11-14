@@ -2,7 +2,6 @@
 #define TRAINING_SET_H
 
 #include <vector>
-#include <boost\tuple\tuple.hpp>
 
 class TrainingSet
 {
@@ -15,7 +14,8 @@ public:
 	int size();
 
 private:
-	std::vector<boost::tuple<Data, Data > > data_;
+	std::vector<Data> inputs_;
+	std::vector<Data> outputs_;
 };
 
 #endif
