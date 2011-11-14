@@ -63,7 +63,7 @@ void MainWindow::createNetwork()
 	net = new NeuralNetwork();
 	thread = new SupervisorThread();
 	NetworkProperties np = properties->getProperties();
-	net->addInputLayer(np.layers.size());
+	net->addInputLayer(2);
 	for(QLinkedList<Layer>::const_iterator it = np.layers.begin(); it != np.layers.end(); ++it)
 		net->addLayer((*it).neuronCount, (*it).activationFunction);
 
