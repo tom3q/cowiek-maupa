@@ -4,6 +4,7 @@ SupervisorThread::SupervisorThread(QObject *parent) : QThread(parent)
 {
 	stopped = true;
 	i = 0;
+	setTerminationEnabled(true);
 }
 
 SupervisorThread::~SupervisorThread()

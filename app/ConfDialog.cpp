@@ -10,7 +10,7 @@ ConfDialog::ConfDialog(QWidget *parent) : QDialog(parent)
 
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addRow()));
 	connect(ui.deleteButton, SIGNAL(clicked()), this, SLOT(deleteRow()));
-	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(hide()));
+	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 	connect(ui.okButton, SIGNAL(clicked()), this, SLOT(setProperties()));
 }
 
@@ -143,8 +143,7 @@ void ConfDialog::setProperties()
 		properties.layers.push_back(layer);
 	}
 
-	emit okClicked();
-	hide();
+	accept();
 }
 
 NetworkProperties ConfDialog::getProperties()
