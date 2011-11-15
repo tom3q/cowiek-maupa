@@ -1,6 +1,5 @@
 #include "MainWindow.h"
 #include <QtGui/QFileDialog>
-#include <QImage>
 #include <QPixmap>
 #include <QRgb>
 #include <vector>
@@ -12,11 +11,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) : QMainWindow(parent, 
 
 	connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPicture()));
-	connect(ui.createNetworkButton, SIGNAL(clicked()), this, SLOT(showProperties()));
+	connect(ui.editNetworkButton, SIGNAL(clicked()), this, SLOT(editNetwork()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	connect(ui.stepButton, SIGNAL(clicked()), this, SLOT(step()));
-	connect(ui.stopButton, SIGNAL(clicked()), this, SLOT(stop()));
-	connect(properties, SIGNAL(okClicked()), this, SLOT(createNetwork()));
+	connect(thread, SIGNAL(setEpoch(int)), this, SLOT(setEpoch(int)));
+	connect(thread, SIGNAL(setError(int)), this, SLOT(setError(int)));
 }
 
 MainWindow::~MainWindow()
@@ -24,8 +23,10 @@ MainWindow::~MainWindow()
 	delete properties;
 	delete originalScene;
 	delete restoredScene;
-	if(thread)
-		delete thread;
+	delete image;
+	thread->stop();
+	thread->wait();
+	delete thread;
 	if(net)
 		delete net;
 	if(trainingSet)
@@ -36,63 +37,69 @@ void MainWindow::init()
 {
 	ui.setupUi(this);
 
+	image = new QImage();
 	originalScene = new QGraphicsScene();
 	restoredScene = new QGraphicsScene();
 	ui.originalView->setScene(originalScene);
 	ui.restoredView->setScene(restoredScene);
 	properties = new ConfDialog();
+	thread = new SupervisorThread();
 
 	net = NULL;
 	trainingSet = NULL;
-	thread = NULL;
+	imageLoaded = false;
+	netCreated = false;
+	threadReady = false;
 }
 
-void MainWindow::showProperties()
+void MainWindow::editNetwork()
 {
-	properties->show();
-}
+	int result = properties->exec();
+	if(result == QDialog::Rejected)
+		return;
 
-void MainWindow::createNetwork()
-{
-	if(thread)
-		delete thread;
+	if(thread->isRunning())
+		stopThread();
 
 	if(net)
 		delete net;
 
 	net = new NeuralNetwork();
-	thread = new SupervisorThread();
 	NetworkProperties np = properties->getProperties();
 	net->addInputLayer(2);
+	// TODO: add layers correctly
 	for(QLinkedList<Layer>::const_iterator it = np.layers.begin(); it != np.layers.end(); ++it)
 		net->addLayer((*it).neuronCount, (*it).activationFunction);
 
-	thread->setNeuralNetwork(*net);
-	connect(thread, SIGNAL(setEpoch(int)), this, SLOT(setEpoch(int)));
-	connect(thread, SIGNAL(setError(int)), this, SLOT(setError(int)));
-	ui.loadButton->setEnabled(true);
+	setEpoch(0);
+	setError(0);
+
+	netCreated = true;
+	threadReady = false;
 }
 
 void MainWindow::loadPicture()
 {
 	QString filename = QFileDialog::getOpenFileName();
-	QImage image(filename);
-        imageWidth_ = image.width();
-        imageHeight_ = image.height();
+	if(filename.isNull())
+		return;
 
-	if(trainingSet)
-		delete trainingSet;
+	if(thread->isRunning())
+		stopThread();
 
-	trainingSet = new TrainingSet();
-	convertToGrayscale(&image);
-	prepareTrainingSet(&image);
-	thread->setTrainingSet(*trainingSet);
-	QPixmap pixmap = QPixmap::fromImage(image);
+	image->load(filename);
+	imageWidth_ = image->width();
+	imageHeight_ = image->height();
+
+	convertToGrayscale(image);
+	prepareTrainingSet(image);
 	originalScene->clear();
-	originalScene->addPixmap(pixmap);
-	ui.playButton->setEnabled(true);
-	ui.stepButton->setEnabled(true);
-	ui.stopButton->setEnabled(true);
+	originalScene->addPixmap(QPixmap::fromImage(*image));
+	setEpoch(0);
+	setError(0);
+
+	imageLoaded = true;
+	threadReady = false;
 }
 
 void MainWindow::convertToGrayscale(QImage *image)
@@ -108,11 +115,24 @@ void MainWindow::convertToGrayscale(QImage *image)
 
 void MainWindow::play()
 {
+	if(!netCreated)
+		editNetwork();
+
+	if(!imageLoaded)
+		loadPicture();
+
+	if(!imageLoaded || !netCreated)
+		return;
+
+	if(!threadReady) {
+		thread->setNeuralNetwork(*net);
+		thread->setTrainingSet(*trainingSet);
+	}
+
 	ui.playButton->setText("Pause");
 	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(pause()));
 	ui.stepButton->setEnabled(false);
-	ui.createNetworkButton->setEnabled(false);
 	thread->setStopped(false);
 	thread->start();
 }
@@ -120,9 +140,9 @@ void MainWindow::play()
 void MainWindow::step()
 {
 	thread->setStopped(true);
-        thread->start();
+	thread->start();
 
-        drawTheSHIT();
+	drawTheSHIT();
 }
 
 void MainWindow::pause()
@@ -131,21 +151,9 @@ void MainWindow::pause()
 	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(pause()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	ui.stepButton->setEnabled(true);
-	ui.createNetworkButton->setEnabled(true);
 	thread->stop();
 
-        drawTheSHIT();
-}
-
-void MainWindow::stop()
-{
-	thread->stop();
-	setEpoch(0);
-	setError(0);
-	ui.playButton->setEnabled(false);
-	ui.stepButton->setEnabled(false);
-	ui.stopButton->setEnabled(false);
-	originalScene->clear();
+	drawTheSHIT();
 }
 
 void MainWindow::setEpoch(int n)
@@ -160,6 +168,11 @@ void MainWindow::setError(int n)
 
 void MainWindow::prepareTrainingSet(QImage *image)
 {
+	if(trainingSet)
+		delete trainingSet;
+
+	trainingSet = new TrainingSet();
+
 	std::vector<double> in, out;
 	in.resize(2, 0);
 	out.resize(1, 0);
@@ -176,21 +189,33 @@ void MainWindow::prepareTrainingSet(QImage *image)
 	}
 }
 
-void MainWindow::drawTheSHIT() {
-    // wypieprzcie to!
-    // Tolkjen
-    QImage img(imageWidth_, imageHeight_, QImage::Format_RGB32);
-    std::vector<double> in(2, 0), out(1, 0);
-    for (int x=0; x<imageWidth_; ++x)
-    for (int y=0; y<imageHeight_; ++y) {
-        in[0] = x;
-        in[1] = y;
-        out = net->getOutput(in);
+void MainWindow::drawTheSHIT()
+{
+	// wypieprzcie to!
+	// Tolkjen
+	QImage img(imageWidth_, imageHeight_, QImage::Format_RGB32);
+	std::vector<double> in(2, 0), out(1, 0);
+	for (int x=0; x<imageWidth_; ++x)
+		for (int y=0; y<imageHeight_; ++y) {
+			in[0] = x;
+			in[1] = y;
+			out = net->getOutput(in);
 
-        int gray = (int) out[0];
-        img.setPixel(x, y, qRgb(gray, gray, gray));
-    }
-    QPixmap pixels = QPixmap::fromImage(img);
-    restoredScene->clear();
-    restoredScene->addPixmap(pixels);
+			int gray = (int) out[0];
+			img.setPixel(x, y, qRgb(gray, gray, gray));
+		}
+	QPixmap pixels = QPixmap::fromImage(img);
+	restoredScene->clear();
+	restoredScene->addPixmap(pixels);
+}
+
+void MainWindow::stopThread()
+{
+	thread->stop();
+	thread->wait();
+
+	ui.playButton->setText("Play");
+	ui.stepButton->setEnabled(true);
+	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(pause()));
+	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 }

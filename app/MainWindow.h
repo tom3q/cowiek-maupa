@@ -3,6 +3,7 @@
 
 #include <QtGui/QMainWindow>
 #include <QtGui/QGraphicsScene>
+#include <QImage>
 #include <vector>
 #include "ui_MainWindow.h"
 #include "ConfDialog.h"
@@ -19,13 +20,11 @@ public:
 	~MainWindow();
 
 private slots:
-	void showProperties();
-	void createNetwork();
+	void editNetwork();
 	void loadPicture();
 	void play();
 	void step();
 	void pause();
-	void stop();
 	void setEpoch(int n);
 	void setError(int n);
 
@@ -35,17 +34,22 @@ private:
 	QGraphicsScene *restoredScene;
 	ConfDialog *properties;
 	SupervisorThread *thread;
+	QImage *image;
+	bool imageLoaded;
+	bool netCreated;
+	bool threadReady;
 
 	NeuralNetwork *net;
 	TrainingSet *trainingSet;
 
-        int imageWidth_, imageHeight_;
+	int imageWidth_, imageHeight_;
 
 	void init();
 	void convertToGrayscale(QImage *image);
 	void prepareTrainingSet(QImage *image);
+	void stopThread();
 
-        void drawTheSHIT();
+	void drawTheSHIT();
 };
 
 #endif // MAINWINDOW_H

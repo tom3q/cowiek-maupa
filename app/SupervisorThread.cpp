@@ -7,6 +7,8 @@ SupervisorThread::SupervisorThread(QObject *parent) : QThread(parent)
 	lastError = 0;
 	dead = 0;
 	randomized = 0;
+
+	setTerminationEnabled(true);
 }
 
 SupervisorThread::~SupervisorThread()
