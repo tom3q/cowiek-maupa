@@ -2,9 +2,19 @@
 #define ACTIVATION_FUNCTION_H
 
 class ActivationFunction {
+protected:
+	ActivationFunction();
+	virtual float calcValue(float sum) { return 0; };
+	virtual float calcDerivative(float arg) { return 0; };
 public:
-	virtual double value(double sum) = 0;
-	virtual double derivative(double arg) = 0;
+	float value(float arg);
+	float derivative(float arg);
+
+private:
+	float valarg_;
+	float val_;
+	float drvarg_;
+	float drv_;
 };
 
 #endif

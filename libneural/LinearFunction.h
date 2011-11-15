@@ -5,9 +5,9 @@
 
 class LinearFunction : public ActivationFunction
 {
-public:
-	virtual double value(double sum);
-	virtual double derivative(double arg);
+protected:
+	virtual float calcValue(float sum);
+	virtual float calcDerivative(float arg);
 };
 
 #endif

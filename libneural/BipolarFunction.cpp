@@ -1,17 +1,19 @@
 #include <cmath>
 #include "BipolarFunction.h"
 
-BipolarFunction::BipolarFunction(double beta)
+BipolarFunction::BipolarFunction(float beta)
 	: beta_(beta)
 {
 }
 
-double BipolarFunction::value(double arg) {
-	double tmp = exp(2.0*beta_*arg);
-	return (double) (tmp-1.0)/(tmp+1.0);
+float BipolarFunction::calcValue(float arg) {
+	float tmp = exp(2.0*beta_*arg);
+	float val = (float) (tmp-1.0)/(tmp+1.0);
+	return val;
 }
 
-double BipolarFunction::derivative(double sum) {
-	double tmp = value(sum);
-	return (double) beta_*(1.0-tmp*tmp);
+float BipolarFunction::calcDerivative(float sum) {
+	float tmp = value(sum);
+	float val = (float) beta_*(1.0-tmp*tmp);
+	return val;
 }

@@ -1,9 +1,9 @@
 #include "LinearFunction.h"
 
-double LinearFunction::value(double sum) {
+float LinearFunction::calcValue(float sum) {
 	return sum;
 }
 
-double LinearFunction::derivative(double arg) {
+float LinearFunction::calcDerivative(float arg) {
 	return 1;
 }

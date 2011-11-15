@@ -5,13 +5,14 @@
 
 class BipolarFunction : public ActivationFunction {
 public:
-	BipolarFunction(double beta = 1);
+	BipolarFunction(float beta = 1);
 
-	virtual double value(double arg);
-	virtual double derivative(double arg);
+protected:
+	virtual float calcValue(float arg);
+	virtual float calcDerivative(float arg);
 
 private:
-	double beta_;
+	float beta_;
 };
 
 #endif
