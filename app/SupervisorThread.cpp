@@ -3,7 +3,10 @@
 SupervisorThread::SupervisorThread(QObject *parent) : QThread(parent)
 {
 	stopped = true;
-	i = 0;
+	epochs = 0;
+	lastError = 0;
+	dead = 0;
+	randomized = 0;
 }
 
 SupervisorThread::~SupervisorThread()
@@ -12,9 +15,8 @@ SupervisorThread::~SupervisorThread()
 
 void SupervisorThread::run()
 {
-	int epochs = 0, dead = 0, randomized = 0;
 	const double errorDelta = 0.001, deadCount = 10;
-	double lastError = 0, error;
+	double error;
 
 	do {
 		error = supervisor.totalError();

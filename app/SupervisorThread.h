@@ -26,7 +26,10 @@ signals:
 
 private:
 	bool stopped;
-	int i;
+	int dead;
+	int randomized;
+	int epochs;
+	double lastError;
 	NeuralNetwork *net_;
 	RPROPSupervisor supervisor;
 };
