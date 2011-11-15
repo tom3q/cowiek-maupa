@@ -16,6 +16,11 @@ void RPROPSupervisor::buildData() {
 	errorDrv_.clear();
 	prevDrv_.clear();
 	delta_.clear();
+
+	n_.reserve(net_->layerCount());
+	errorDrv_.reserve(net_->layerCount());
+	prevDrv_.reserve(net_->layerCount());
+	delta_.reserve(net_->layerCount());
 	
 	// create matrices holding n(t) and derivative information
 	for (int i=0; i<net_->layerCount(); ++i) {
