@@ -41,6 +41,7 @@ private:
 
 	NeuralNetwork *net;
 	TrainingSet *trainingSet;
+	NetworkProperties np;
 
 	int imageWidth_, imageHeight_;
 

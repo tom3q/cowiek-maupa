@@ -134,7 +134,7 @@ void ConfDialog::setProperties()
 	properties.nMax = ui.nMaxEdit->text().toInt();
 	properties.nMin = ui.nMinEdit->text().toInt();
 
-	for(int i = 0; i < ui.tableWidget->rowCount(); ++i) {
+	for(int i = 1; i < ui.tableWidget->rowCount(); ++i) {
 		int neurons = ui.tableWidget->item(i, 0)->text().toInt();
 		int function =  ((QComboBox *) ui.tableWidget->cellWidget(i, 2))->currentIndex();
 		Layer layer(neurons, function);
