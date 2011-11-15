@@ -7,8 +7,8 @@
 #include "ui_MainWindow.h"
 #include "ConfDialog.h"
 #include "SupervisorThread.h"
-#include "libneural\NeuralNetwork.h"
-#include "libneural\TrainingSet.h"
+#include "../libneural/NeuralNetwork.h"
+#include "../libneural/TrainingSet.h"
 
 class MainWindow : public QMainWindow
 {
@@ -39,9 +39,13 @@ private:
 	NeuralNetwork *net;
 	TrainingSet *trainingSet;
 
+        int imageWidth_, imageHeight_;
+
 	void init();
 	void convertToGrayscale(QImage *image);
 	void prepareTrainingSet(QImage *image);
+
+        void drawTheSHIT();
 };
 
 #endif // MAINWINDOW_H
