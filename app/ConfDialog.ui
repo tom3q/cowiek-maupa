@@ -10,6 +10,18 @@
     <height>341</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>563</width>
+    <height>341</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>563</width>
+    <height>341</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Network properties</string>
   </property>

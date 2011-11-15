@@ -77,8 +77,8 @@ void MainWindow::loadPicture()
 {
 	QString filename = QFileDialog::getOpenFileName();
 	QImage image(filename);
-        imageWidth_ = image.width();
-        imageHeight_ = image.height();
+	imageWidth_ = image.width();
+	imageHeight_ = image.height();
 
 	if(trainingSet)
 		delete trainingSet;
@@ -120,9 +120,9 @@ void MainWindow::play()
 void MainWindow::step()
 {
 	thread->setStopped(true);
-        thread->start();
+	thread->start();
 
-        drawTheSHIT();
+	drawTheSHIT();
 }
 
 void MainWindow::pause()
@@ -134,7 +134,7 @@ void MainWindow::pause()
 	ui.createNetworkButton->setEnabled(true);
 	thread->stop();
 
-        drawTheSHIT();
+	drawTheSHIT();
 }
 
 void MainWindow::stop()
@@ -176,21 +176,22 @@ void MainWindow::prepareTrainingSet(QImage *image)
 	}
 }
 
-void MainWindow::drawTheSHIT() {
-    // wypieprzcie to!
-    // Tolkjen
-    QImage img(imageWidth_, imageHeight_, QImage::Format_RGB32);
-    std::vector<double> in(2, 0), out(1, 0);
-    for (int x=0; x<imageWidth_; ++x)
-    for (int y=0; y<imageHeight_; ++y) {
-        in[0] = x;
-        in[1] = y;
-        out = net->getOutput(in);
+void MainWindow::drawTheSHIT()
+{
+	// wypieprzcie to!
+	// Tolkjen
+	QImage img(imageWidth_, imageHeight_, QImage::Format_RGB32);
+	std::vector<double> in(2, 0), out(1, 0);
+	for (int x=0; x<imageWidth_; ++x)
+		for (int y=0; y<imageHeight_; ++y) {
+			in[0] = x;
+			in[1] = y;
+			out = net->getOutput(in);
 
-        int gray = (int) out[0];
-        img.setPixel(x, y, qRgb(gray, gray, gray));
-    }
-    QPixmap pixels = QPixmap::fromImage(img);
-    restoredScene->clear();
-    restoredScene->addPixmap(pixels);
+			int gray = (int) out[0];
+			img.setPixel(x, y, qRgb(gray, gray, gray));
+		}
+	QPixmap pixels = QPixmap::fromImage(img);
+	restoredScene->clear();
+	restoredScene->addPixmap(pixels);
 }

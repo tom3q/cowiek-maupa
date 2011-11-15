@@ -25,6 +25,8 @@ signals:
 private:
 	Ui::ConfDialog ui;
 	NetworkProperties properties;
+
+	void init();
 };
 
 #endif // CONFDIALOG_H

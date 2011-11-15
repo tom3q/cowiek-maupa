@@ -2,10 +2,11 @@
 #include "Layer.h"
 #include <QComboBox>
 #include <QColor>
+#include <QPalette>
 
 ConfDialog::ConfDialog(QWidget *parent) : QDialog(parent)
 {
-	ui.setupUi(this);
+	init();
 
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addRow()));
 	connect(ui.deleteButton, SIGNAL(clicked()), this, SLOT(deleteRow()));
@@ -17,70 +18,70 @@ ConfDialog::~ConfDialog()
 {
 }
 
-void ConfDialog::addRow()
+void ConfDialog::init()
 {
-	int rows = ui.tableWidget->rowCount();
-	QTableWidgetItem *empty = new QTableWidgetItem("");
+	ui.setupUi(this);
+
 	QComboBox *combo = new QComboBox;
 	combo->addItem("Unipolar");
 	combo->addItem("Bipolar");
 	combo->addItem("Linear");
-	combo->setCurrentIndex(2);
-	combo->setEnabled(false);
+	QComboBox *combo2 = new QComboBox;
+	combo2->addItem("Unipolar");
+	combo2->addItem("Bipolar");
+	combo2->addItem("Linear");
+	combo2->setCurrentIndex(2);
+	combo2->setEnabled(false);
 
-	if(rows == 0) {
-		ui.tableWidget->insertRow(rows);
-		QTableWidgetItem *typeInput = new QTableWidgetItem("Input");
-		typeInput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		ui.tableWidget->setItem(rows, 1, typeInput);
-		combo->setCurrentIndex(0);
-		combo->setEnabled(true);
-		ui.tableWidget->setCellWidget(rows, 2, combo);
-	}
-	else {
-		ui.tableWidget->insertRow(rows);
-		QTableWidgetItem *typeOutput = new QTableWidgetItem("Output");
-		typeOutput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		ui.tableWidget->setItem(rows, 1, typeOutput);
-		ui.tableWidget->setCellWidget(rows, 2, combo);
-		if(rows > 1) {
-			ui.tableWidget->item(rows - 1, 1)->setText("Hidden");
-			((QComboBox *) ui.tableWidget->cellWidget(rows - 1, 2))->setCurrentIndex(0);
-			((QComboBox *) ui.tableWidget->cellWidget(rows - 1, 2))->setEnabled(true);
-		}
-	}
-	ui.tableWidget->setItem(rows, 0, empty);
+	QTableWidgetItem *typeInput = new QTableWidgetItem("Input");
+	QTableWidgetItem *typeOutput = new QTableWidgetItem("Output");
+	QTableWidgetItem *countInput = new QTableWidgetItem("2");
+	QTableWidgetItem *countOutput = new QTableWidgetItem("1");
+	typeInput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	typeOutput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	countInput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	countOutput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+	ui.tableWidget->insertRow(0);
+	ui.tableWidget->setItem(0, 0, countInput);
+	ui.tableWidget->setItem(0, 1, typeInput);
+	ui.tableWidget->setCellWidget(0, 2, combo);
+
+	ui.tableWidget->insertRow(1);
+	ui.tableWidget->setItem(1, 0, countOutput);
+	ui.tableWidget->setItem(1, 1, typeOutput);
+	ui.tableWidget->setCellWidget(1, 2, combo2);
+}
+
+void ConfDialog::addRow()
+{
+	int rows = ui.tableWidget->rowCount();
+	QTableWidgetItem *empty = new QTableWidgetItem("");
+	QTableWidgetItem *typeHidden = new QTableWidgetItem("Hidden");
+	typeHidden->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	QComboBox *combo = new QComboBox;
+	combo->addItem("Unipolar");
+	combo->addItem("Bipolar");
+	combo->addItem("Linear");
+
+	ui.tableWidget->insertRow(rows - 1);
+	ui.tableWidget->setItem(rows - 1, 0, empty);
+	ui.tableWidget->setItem(rows - 1, 1, typeHidden);
+	ui.tableWidget->setCellWidget(rows - 1, 2, combo);
 }
 
 void ConfDialog::deleteRow()
 {
 	int selected = ui.tableWidget->currentRow();
 	int rows = ui.tableWidget->rowCount();
-	if(rows > 1) {
-		if(selected == (rows - 1) && rows > 2) {
-			ui.tableWidget->item(selected - 1, 1)->setText("Output");
-			((QComboBox *) ui.tableWidget->cellWidget(selected - 1, 2))->setCurrentIndex(2);
-			((QComboBox *) ui.tableWidget->cellWidget(selected - 1, 2))->setEnabled(false);
-		}
-		else if(selected == 0) {
-			ui.tableWidget->item(selected + 1, 1)->setText("Input");
-			((QComboBox *) ui.tableWidget->cellWidget(selected + 1, 2))->setCurrentIndex(0);
-			((QComboBox *) ui.tableWidget->cellWidget(selected + 1, 2))->setEnabled(true);
-		}
-	}
+	if(selected == 0 || selected == (rows - 1))
+		return;
+
 	ui.tableWidget->removeRow(selected);
 }
 
 void ConfDialog::setProperties()
 {
-	properties.a = ui.aEdit->text().toInt();
-	properties.b = ui.bEdit->text().toInt();
-	properties.nMax = ui.nMaxEdit->text().toInt();
-	properties.nMin = ui.nMinEdit->text().toInt();
-
-	if(ui.tableWidget->rowCount() < 2)
-		return;
-
 	bool badField = false;
 	for(int i = 0; i < ui.tableWidget->rowCount(); ++i) {
 		ui.tableWidget->item(i, 0)->setBackgroundColor(QColor(255, 255, 255));
@@ -90,8 +91,50 @@ void ConfDialog::setProperties()
 		}
 	}
 
+	QPalette p = ui.aEdit->palette();
+	p.setColor(QPalette::Base, QColor(255,255,255));
+	ui.aEdit->setPalette(p);
+	if(ui.aEdit->text().isEmpty() || ui.aEdit->text().toInt() <= 0) {
+		QPalette p = ui.aEdit->palette();
+		p.setColor(QPalette::Base, QColor(255,0,0));
+		ui.aEdit->setPalette(p);
+		badField = true;
+	}
+	p = ui.bEdit->palette();
+	p.setColor(QPalette::Base, QColor(255,255,255));
+	ui.bEdit->setPalette(p);
+	if(ui.bEdit->text().isEmpty() || ui.bEdit->text().toInt() <= 0) {
+		p = ui.bEdit->palette();
+		p.setColor(QPalette::Base, QColor(255,0,0));
+		ui.bEdit->setPalette(p);
+		badField = true;
+	}
+	p = ui.nMaxEdit->palette();
+	p.setColor(QPalette::Base, QColor(255,255,255));
+	ui.nMaxEdit->setPalette(p);
+	if(ui.nMaxEdit->text().isEmpty() || ui.nMaxEdit->text().toInt() <= 0) {
+		p = ui.nMaxEdit->palette();
+		p.setColor(QPalette::Base, QColor(255,0,0));
+		ui.nMaxEdit->setPalette(p);
+		badField = true;
+	}
+	p = ui.nMinEdit->palette();
+	p.setColor(QPalette::Base, QColor(255,255,255));
+	ui.nMinEdit->setPalette(p);
+	if(ui.nMinEdit->text().isEmpty() || ui.nMinEdit->text().toInt() <= 0) {
+		p = ui.nMinEdit->palette();
+		p.setColor(QPalette::Base, QColor(255,0,0));
+		ui.nMinEdit->setPalette(p);
+		badField = true;
+	}
+
 	if(badField)
 		return;
+
+	properties.a = ui.aEdit->text().toInt();
+	properties.b = ui.bEdit->text().toInt();
+	properties.nMax = ui.nMaxEdit->text().toInt();
+	properties.nMin = ui.nMinEdit->text().toInt();
 
 	for(int i = 0; i < ui.tableWidget->rowCount(); ++i) {
 		int neurons = ui.tableWidget->item(i, 0)->text().toInt();
