@@ -7,8 +7,8 @@ Matrix2D::Matrix2D(int width, int height) {
 	height_ = height;
 	memLength_ = width_*height_;
 
-	array_ = new double[width_*height_];
-	for (int i=0; i<width_*height_; ++i)
+	array_ = new double[memLength_];
+	for (int i=0; i<memLength_; ++i)
 		array_[i] = 0;
 }
 
@@ -17,7 +17,7 @@ Matrix2D::Matrix2D(const Matrix2D &rhs) {
 	height_ = rhs.height_;
 	memLength_ = width_*height_; 
 
-	array_ = new double[width_*height_];
+	array_ = new double[memLength_];
 	memcpy(array_, rhs.array_, memLength_ * sizeof(double));
 }
 
