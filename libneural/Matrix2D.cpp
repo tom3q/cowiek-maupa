@@ -18,8 +18,7 @@ Matrix2D::Matrix2D(const Matrix2D &rhs) {
 	memLength_ = width_*height_; 
 
 	array_ = new double[width_*height_];
-	for (int i=0; i<width_*height_; ++i)
-		array_[i] = rhs.array_[i];
+	memcpy(array_, rhs.array_, memLength_ * sizeof(double));
 }
 
 Matrix2D::~Matrix2D() {
@@ -90,8 +89,7 @@ Matrix2D &Matrix2D::operator=(Matrix2D &rhs) {
 		width_ = rhs.width_;
 		height_ = rhs.height_;
 
-		for (int i=0; i<width_*height_; ++i)
-			array_[i] = rhs.array_[i];
+		memcpy(array_, rhs.array_, memLength_ * sizeof(double));
 	}
 
 	return *this;
