@@ -2,14 +2,14 @@
 #include <stdexcept>
 #include "Matrix2D.h"
 
-Matrix2D::Matrix2D(int width, int height) {
+Matrix2D::Matrix2D(int width, int height, double val) {
 	width_ = width;
 	height_ = height;
 	memLength_ = width_*height_;
 
 	array_ = new double[memLength_];
 	for (int i=0; i<memLength_; ++i)
-		array_[i] = 0;
+		array_[i] = val;
 }
 
 Matrix2D::Matrix2D(const Matrix2D &rhs) {
