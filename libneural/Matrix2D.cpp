@@ -82,6 +82,27 @@ Matrix2D Matrix2D::operator*(Matrix2D &rhs) {
 	return result;
 }
 
+Matrix2D::Matrix2D(Matrix2D &lhs, Matrix2D &rhs) {
+	// wrong operand matrix size
+	if (lhs.width_ != rhs.height_) {
+		throw std::invalid_argument("wrong operand matrix size");
+		//return;
+	}
+
+	width_ = rhs.width_;
+	height_ = lhs.height_;
+	memLength_ = width_*height_;
+
+	array_ = new double[memLength_];
+
+	if (lhs.height_ == 1) {
+		multiplyMatrices(*this, lhs, rhs, lhs.width_, 1, rhs.width_, rhs.height_);
+		return;
+	}
+
+	multiplyMatrices(*this, lhs, rhs, lhs.width_, lhs.height_, rhs.width_, rhs.height_);
+}
+
 Matrix2D &Matrix2D::operator=(Matrix2D &rhs) {
 	if (&rhs != this)
 	{

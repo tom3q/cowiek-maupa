@@ -6,6 +6,7 @@ class Matrix2D
 public:
 	Matrix2D(int width = 1, int height = 1);
 	Matrix2D(const Matrix2D &rhs);
+	Matrix2D::Matrix2D(Matrix2D &lhs, Matrix2D &rhs);
 	~Matrix2D();
 
 	int getWidth() const;
