@@ -69,7 +69,7 @@ std::vector<double> NeuralNetwork::getOutput(std::vector<double> &input) {
 		vect.at(i+1, 0) = input[i];
 
 	for (unsigned int i=0; i<matrices_.size(); ++i) {
-		Matrix2D sums(vect * matrices_[i]);
+		Matrix2D sums(vect, matrices_[i]);
 
 		Neurons &neurons = neurons_[i];
 		for (unsigned int j=0; j<neurons.size(); ++j)
