@@ -14,6 +14,7 @@ public:
 	SupervisorThread(QObject *parent = 0);
 	~SupervisorThread();
 
+	void init();
 	void run();
 	void stop();
 	void setStopped(bool stopped);

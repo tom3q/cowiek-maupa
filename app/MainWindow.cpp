@@ -72,6 +72,7 @@ void MainWindow::editNetwork()
 
 	setEpoch(0);
 	setError(0);
+	thread->init();
 
 	netCreated = true;
 	threadReady = false;
@@ -96,6 +97,7 @@ void MainWindow::loadPicture()
 	originalScene->addPixmap(QPixmap::fromImage(*image));
 	setEpoch(0);
 	setError(0);
+	thread->init();
 
 	imageLoaded = true;
 	threadReady = false;

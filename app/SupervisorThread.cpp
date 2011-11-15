@@ -3,16 +3,20 @@
 SupervisorThread::SupervisorThread(QObject *parent) : QThread(parent)
 {
 	stopped = true;
-	epochs = 0;
-	lastError = 0;
-	dead = 0;
-	randomized = 0;
-
 	setTerminationEnabled(true);
+	init();
 }
 
 SupervisorThread::~SupervisorThread()
 {
+}
+
+void SupervisorThread::init()
+{
+	epochs = 0;
+	lastError = 0;
+	dead = 0;
+	randomized = 0;
 }
 
 void SupervisorThread::run()
