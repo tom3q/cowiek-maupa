@@ -27,6 +27,7 @@ signals:
 private:
 	bool stopped;
 	int i;
+	NeuralNetwork *net_;
 	RPROPSupervisor supervisor;
 };
 
