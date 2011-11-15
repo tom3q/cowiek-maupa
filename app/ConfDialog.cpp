@@ -26,31 +26,29 @@ void ConfDialog::init()
 	combo->addItem("Unipolar");
 	combo->addItem("Bipolar");
 	combo->addItem("Linear");
-	QComboBox *combo2 = new QComboBox;
-	combo2->addItem("Unipolar");
-	combo2->addItem("Bipolar");
-	combo2->addItem("Linear");
-	combo2->setCurrentIndex(2);
-	combo2->setEnabled(false);
+	combo->setCurrentIndex(2);
+	combo->setEnabled(false);
 
 	QTableWidgetItem *typeInput = new QTableWidgetItem("Input");
 	QTableWidgetItem *typeOutput = new QTableWidgetItem("Output");
 	QTableWidgetItem *countInput = new QTableWidgetItem("2");
 	QTableWidgetItem *countOutput = new QTableWidgetItem("1");
+	QTableWidgetItem *empty = new QTableWidgetItem("");
 	typeInput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	typeOutput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	countInput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	countOutput->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+	empty->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
 	ui.tableWidget->insertRow(0);
 	ui.tableWidget->setItem(0, 0, countInput);
 	ui.tableWidget->setItem(0, 1, typeInput);
-	ui.tableWidget->setCellWidget(0, 2, combo);
+	ui.tableWidget->setItem(0, 2, empty);
 
 	ui.tableWidget->insertRow(1);
 	ui.tableWidget->setItem(1, 0, countOutput);
 	ui.tableWidget->setItem(1, 1, typeOutput);
-	ui.tableWidget->setCellWidget(1, 2, combo2);
+	ui.tableWidget->setCellWidget(1, 2, combo);
 }
 
 void ConfDialog::addRow()
