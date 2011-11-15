@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <stdexcept>
 #include "Matrix2D.h"
 
 Matrix2D::Matrix2D(int width, int height) {
@@ -45,7 +46,7 @@ double &Matrix2D::at(int x, int y) {
 Matrix2D & Matrix2D::operator+=(Matrix2D &rhs) {
 	// wrong operand matrix size
 	if (rhs.width_ != width_ || rhs.height_ != height_) {
-		throw -1;
+		throw std::invalid_argument("wrong operand matrix size");
 		//return;
 	}
 
@@ -58,7 +59,7 @@ Matrix2D & Matrix2D::operator+=(Matrix2D &rhs) {
 Matrix2D Matrix2D::operator*(Matrix2D &rhs) {
 	// wrong operand matrix size
 	if (width_ != rhs.height_) {
-		throw -2;
+		throw std::invalid_argument("wrong operand matrix size");
 		//return;
 	}
 

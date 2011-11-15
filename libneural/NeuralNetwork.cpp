@@ -5,6 +5,7 @@
 #include "LinearFunction.h"
 #include "UnipolarFunction.h"
 #include "BipolarFunction.h"
+#include <stdexcept>
 
 typedef std::vector<Neuron> Neurons;
 
@@ -23,7 +24,7 @@ void NeuralNetwork::addInputLayer(int inputs) {
 void NeuralNetwork::addLayer(int nCount, int actFunction) {
 	// if no input was specified, throw an exception
 	if (inputCount_ == 0) {
-		throw -1;
+		throw std::invalid_argument("no input specified");
 		return;
 	}
 
