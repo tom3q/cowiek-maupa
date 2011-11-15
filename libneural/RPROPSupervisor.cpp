@@ -45,6 +45,50 @@ double sgn(double a) {
 	return a > 0 ? 1 : -1;
 }
 
+static inline void processLayer(int l, NeuralNetwork *net_, int layerCount,
+	TrainingSet *trainingSet_, std::vector<TrainingSet::Data> &delta_,
+	std::vector<double> &desOutput, std::vector<double> &output,
+	std::vector<Matrix2D> &errorDrv_, int i)
+{
+	double derivative, delta, eps;
+
+	delta_[l].clear();
+	delta_[l].reserve(net_->neurons(l).size());
+
+	for (unsigned int j=0; j<net_->neurons(l).size(); ++j) {
+		// get neuron derivative
+		derivative = net_->neurons(l)[j].getDerivative();
+
+		// get delta. depends on if it is the last layer or not
+		if (l < layerCount - 1) {
+			Matrix2D& connMatrix = net_->connectionMatrix(l+1);
+			eps = 0;
+			for (unsigned int k=0; k<net_->neurons(l+1).size(); k++)
+				eps += delta_[l+1][k] * connMatrix.at(k, j+1);
+			delta = eps * derivative;
+		} else {
+			delta = (desOutput[j] - output[j])*derivative;
+		}
+
+		// store delta for further processing
+		delta_[l].push_back(delta);
+
+		// store delta in treshold connection
+		errorDrv_[l].at(j, 0) += delta;
+
+		// update error derivative matrix
+		if (l == 0) {
+			std::vector<double>& prev = trainingSet_->getInput(i);
+			for (unsigned int k=0; k<prev.size(); ++k)
+				errorDrv_[l].at(j, k+1) += delta * prev[k];
+		} else {
+			std::vector<Neuron>& prev = net_->neurons(l-1);
+			for (unsigned int k=0; k<prev.size(); ++k)
+				errorDrv_[l].at(j, k+1) += delta * prev[k].getValue();
+		}
+	}
+}
+
 void RPROPSupervisor::train() {
 	std::vector<double> output;
 	int layerCount = net_->layerCount();
@@ -66,41 +110,14 @@ void RPROPSupervisor::train() {
 		std::vector<double>& desOutput = trainingSet_->getDesiredOutput(i);
 		output = net_->getOutput(trainingSet_->getInput(i));
 
-		for (int l=layerCount-1; l>=0; l--) {
-			delta_[l].clear();
-			for (unsigned int j=0; j<net_->neurons(l).size(); ++j) {
-				// get neuron derivative
-				derivative = net_->neurons(l)[j].getDerivative();
+		if (layerCount >= 1)
+			processLayer(layerCount - 1, net_, layerCount, trainingSet_, delta_, desOutput, output, errorDrv_, i);
 
-				// get delta. depends on if it is the last layer or not
-				if (l < layerCount-1) {
-					Matrix2D& connMatrix = net_->connectionMatrix(l+1);
-					eps = 0;
-					for (unsigned int k=0; k<net_->neurons(l+1).size(); k++)
-						eps += delta_[l+1][k] * connMatrix.at(k, j+1);
-					delta = eps * derivative;
-				}
-				else
-					delta = (desOutput[j] - output[j])*derivative;
+		for (int l=layerCount-2; l>0; --l)
+			processLayer(l, net_, layerCount, trainingSet_, delta_, desOutput, output, errorDrv_, i);
 
-				// store delta for further processing
-				delta_[l].push_back(delta);
-
-				// store delta in treshold connection
-				errorDrv_[l].at(j, 0) += delta;
-
-				// update error derivative matrix
-				if (l == 0) {
-					std::vector<double>& prev = trainingSet_->getInput(i);
-					for (unsigned int k=0; k<prev.size(); ++k) 
-						errorDrv_[l].at(j, k+1) += delta * prev[k];
-				} else {
-					std::vector<Neuron>& prev = net_->neurons(l-1);
-					for (unsigned int k=0; k<prev.size(); ++k) 
-						errorDrv_[l].at(j, k+1) += delta * prev[k].getValue();
-				}
-			}
-		}
+		if (layerCount > 1)
+			processLayer(0, net_, layerCount, trainingSet_, delta_, desOutput, output, errorDrv_, i);
 	}
 
 	// update n(t) matrices using information stored in error derivative matrices
