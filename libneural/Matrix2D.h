@@ -20,6 +20,7 @@ public:
 private:
 	double *array_;
 	int width_, height_, memLength_;
+	inline void multiplyMatrices(Matrix2D &dest, Matrix2D &lhs, Matrix2D &rhs, int lw, int lh, int rw, int rh);
 };
 
 #endif

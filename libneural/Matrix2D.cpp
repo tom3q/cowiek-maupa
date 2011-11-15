@@ -55,6 +55,19 @@ Matrix2D & Matrix2D::operator+=(Matrix2D &rhs) {
 	return *this;
 }
 
+inline void Matrix2D::multiplyMatrices(Matrix2D &dest, Matrix2D &lhs, Matrix2D &rhs, int lw, int lh, int rw, int rh)
+{
+	for (int x=0; x<rw; ++x) {
+		for (int y=0; y<lh; ++y) {
+			array_[x + y*rw] = 0;
+			for (int i=0; i<lw; ++i) {
+				array_[x + y*rw] +=
+					(double) lhs.array_[i + y*lw] * rhs.array_[x + i*rw];
+			}
+		}
+	}
+}
+
 Matrix2D Matrix2D::operator*(Matrix2D &rhs) {
 	// wrong operand matrix size
 	if (width_ != rhs.height_) {
@@ -64,13 +77,7 @@ Matrix2D Matrix2D::operator*(Matrix2D &rhs) {
 
 	Matrix2D result(rhs.width_, height_);
 
-	for (int x=0; x<rhs.width_; ++x)
-	for (int y=0; y<height_; ++y) {
-		result.array_[x + y*rhs.width_] = 0;
-		for (int i=0; i<width_; ++i)
-			result.array_[x + y*rhs.width_] += 
-			(double) array_[i + y*width_] * rhs.array_[x + i*rhs.width_];
-	}
+	multiplyMatrices(result, *this, rhs, width_, height_, rhs.width_, rhs.height_);
 
 	return result;
 }
