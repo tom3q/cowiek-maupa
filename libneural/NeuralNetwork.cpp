@@ -47,8 +47,7 @@ void NeuralNetwork::addLayer(int nCount, int actFunction) {
 		neurons.push_back(Neuron(funcPtr));
 
 	// create a matrix and fill it with 1
-	Matrix2D matrix(nCount, prevInputCount_ + 1);
-	matrix.fill(1);
+	Matrix2D matrix(nCount, prevInputCount_ + 1, 1.0f);
 
 	// memorize that last added layer had nCount neurons
 	prevInputCount_ = nCount;

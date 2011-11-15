@@ -20,10 +20,9 @@ void RPROPSupervisor::buildData() {
 	// create matrices holding n(t) and derivative information
 	for (int i=0; i<net_->layerCount(); ++i) {
 		Matrix2D tmpMatrix(net_->connectionMatrix(i).getWidth(), 
-						net_->connectionMatrix(i).getHeight());
+						net_->connectionMatrix(i).getHeight(), 0.5f);
 
 		// n(t)
-		tmpMatrix.fill(0.5);
 		n_.push_back(tmpMatrix);
 
 		// derivative matrices
