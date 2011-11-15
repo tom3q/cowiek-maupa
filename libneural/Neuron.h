@@ -9,8 +9,13 @@ public:
 	Neuron();
 	Neuron(boost::shared_ptr<ActivationFunction> f);
 
-	double getValue();
-	double getDerivative();
+	inline double getValue() const {
+		return value_;
+	}
+
+	inline double getDerivative() const {
+		return drv_;
+	}
 
 	void setSum(double sum);
 
