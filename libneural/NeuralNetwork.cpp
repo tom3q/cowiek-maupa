@@ -54,7 +54,8 @@ void NeuralNetwork::addLayer(int nCount, int actFunction) {
 	prevInputCount_ = nCount;
 
 	// put a new layer into layer vector
-	layers_.push_back(boost::make_tuple(matrix, neurons));
+	matrices_.push_back(matrix);
+	neurons_.push_back(neurons);
 }
 
 std::vector<double> NeuralNetwork::getOutput(std::vector<double> &input) {
@@ -67,14 +68,14 @@ std::vector<double> NeuralNetwork::getOutput(std::vector<double> &input) {
 	for (unsigned int i=0; i<input.size(); ++i)
 		vect.at(i+1, 0) = input[i];
 
-	for (unsigned int i=0; i<layers_.size(); ++i) {
-		Matrix2D sums(vect * layers_[i].get<0>());
+	for (unsigned int i=0; i<matrices_.size(); ++i) {
+		Matrix2D sums(vect * matrices_[i]);
 
-		Neurons &neurons = layers_[i].get<1>();
+		Neurons &neurons = neurons_[i];
 		for (unsigned int j=0; j<neurons.size(); ++j)
 			neurons[j].setSum(sums.at(j, 0));
 
-		if (i < layers_.size()-1) {
+		if (i < matrices_.size()-1) {
 			vect = Matrix2D(neurons.size() + 1, 1);
 			vect.at(0, 0) = 1.0;
 			for (unsigned int j=0; j<neurons.size(); ++j)
@@ -90,19 +91,19 @@ std::vector<double> NeuralNetwork::getOutput(std::vector<double> &input) {
 }
 
 Matrix2D& NeuralNetwork::connectionMatrix(int layer) {
-	return layers_[layer].get<0>();
+	return matrices_[layer];
 }
 
 Neurons& NeuralNetwork::neurons(int layer) {
-	return layers_[layer].get<1>();
+	return neurons_[layer];
 }
 
 int NeuralNetwork::layerCount() const {
-	return layers_.size();
+	return matrices_.size();
 }
 
 int NeuralNetwork::outputNeuronCount() const {
-	return layers_[layers_.size()-1].get<1>().size();
+	return neurons_.back().size();
 }
 
 bool NeuralNetwork::isCurrentSupervisor(Supervisor *supervisor) {
@@ -121,8 +122,8 @@ void NeuralNetwork::randomizeConnections(double range) {
 	boost::random::uniform_real_distribution<> random(-range, range);
 
 	// randomization
-	for (unsigned int i=0; i<layers_.size(); i++) {
-		Matrix2D& conn = layers_[i].get<0>();
+	for (unsigned int i=0; i<matrices_.size(); i++) {
+		Matrix2D& conn = matrices_[i];
 		for (int x=0; x<conn.getWidth(); x++)
 		for (int y=0; y<conn.getHeight(); y++)
 			conn.at(x, y) = (double) random(rng);

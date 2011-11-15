@@ -2,14 +2,12 @@
 #define NEURAL_NETWORK_H
 
 #include <vector>
-#include <boost\tuple\tuple.hpp>
 #include <boost\shared_ptr.hpp>
 
 #include "Neuron.h"
 #include "Matrix2D.h"
 
 typedef std::vector<Neuron> Neurons;
-typedef boost::tuple<Matrix2D, Neurons> tuple;
 
 class Supervisor;
 
@@ -41,7 +39,8 @@ public:
 private:
 	int inputCount_, prevInputCount_;
 	Supervisor* supervisor_;
-	std::vector<tuple> layers_;
+	std::vector<Matrix2D> matrices_;
+	std::vector<std::vector<Neuron> > neurons_;
 };
 
 #endif
