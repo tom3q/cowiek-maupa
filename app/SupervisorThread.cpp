@@ -130,6 +130,7 @@ void SupervisorThread::setStopped(bool stopped)
 void SupervisorThread::setNeuralNetwork(NeuralNetwork &net)
 {
 	net_ = &net;
+	net_->randomizeConnections(5.0f);
 	supervisor.setNeuralNetwork(net);
 }
 
