@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) : QMainWindow(parent, 
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	connect(ui.stepButton, SIGNAL(clicked()), this, SLOT(step()));
 	connect(thread, SIGNAL(setEpoch(int)), this, SLOT(setEpoch(int)));
-	connect(thread, SIGNAL(setError(int)), this, SLOT(setError(int)));
+	connect(thread, SIGNAL(setError(double)), this, SLOT(setError(double)));
 }
 
 MainWindow::~MainWindow()
@@ -162,9 +162,9 @@ void MainWindow::setEpoch(int n)
 	ui.epochDisplay->display(n);
 }
 
-void MainWindow::setError(int n)
+void MainWindow::setError(double err)
 {
-	ui.errorDisplay->display(n);
+	ui.errorDisplay->display(err);
 }
 
 void MainWindow::prepareTrainingSet(QImage *image)

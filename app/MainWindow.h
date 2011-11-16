@@ -26,7 +26,7 @@ private slots:
 	void step();
 	void pause();
 	void setEpoch(int n);
-	void setError(int n);
+	void setError(double);
 
 private:
 	Ui::MainWindowClass ui;

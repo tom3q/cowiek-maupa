@@ -25,7 +25,7 @@ public:
 
 signals:
 	void setEpoch(int);
-	void setError(int);
+	void setError(double);
 
 private:
 	bool stopped;
