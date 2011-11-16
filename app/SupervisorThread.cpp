@@ -63,6 +63,7 @@ void SupervisorThread::run()
 		supervisor.train();
 
 		error = getImageAndError();
+		emit setError(error);
 		if (error < 0.001)
 			break;
 
