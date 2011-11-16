@@ -146,3 +146,23 @@ void SupervisorThread::setTrainingSet(TrainingSet &set)
 {
 	supervisor.setTrainingSet(set);
 }
+
+void SupervisorThread::setA(double a)
+{
+	supervisor.setA(a);
+}
+
+void SupervisorThread::setB(double b)
+{
+	supervisor.setB(b);
+}
+
+void SupervisorThread::setNMax(double nMax)
+{
+	supervisor.setNMax(nMax);
+}
+
+void SupervisorThread::setNMin(double nMin)
+{
+	supervisor.setNMin(nMin);
+}

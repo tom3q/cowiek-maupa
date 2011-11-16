@@ -177,6 +177,9 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="text">
+     <string>1.2</string>
+    </property>
    </widget>
    <widget class="QLineEdit" name="bEdit">
     <property name="geometry">
@@ -186,6 +189,9 @@
       <width>141</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>0.5</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="nMaxEdit">
@@ -197,6 +203,9 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="text">
+     <string>50</string>
+    </property>
    </widget>
    <widget class="QLineEdit" name="nMinEdit">
     <property name="geometry">
@@ -206,6 +215,9 @@
       <width>141</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>0.0002</string>
     </property>
    </widget>
   </widget>

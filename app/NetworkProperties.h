@@ -10,10 +10,10 @@ public:
 	NetworkProperties();
 	~NetworkProperties();
 
-	int a;
-	int b;
-	int nMax;
-	int nMin;
+	double a;
+	double b;
+	double nMax;
+	double nMin;
 
 	QLinkedList<Layer> layers;
 };

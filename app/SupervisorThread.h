@@ -25,6 +25,11 @@ public:
 	void setTrainingSet(TrainingSet &set);
 	double getImageAndError();
 
+	void setA(double a);
+	void setB(double b);
+	void setNMax(double nMax);
+	void setNMin(double nMin);
+
 signals:
 	void setEpoch(int);
 	void setError(double);
