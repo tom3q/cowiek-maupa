@@ -184,13 +184,24 @@ void MainWindow::prepareTrainingSet(QImage *image)
 	std::vector<double> in, out;
 	in.resize(2, 0);
 	out.resize(1, 0);
+#ifdef NORMALIZE_DATA
+	const double xScale = 1.0f / image->width();
+	const double yScale = 1.0f / image->height();
+#else
+	const double xScale = 1.0f;
+	const double yScale = 1.0f;
+#endif
 	trainingSet->reserve(image->width() * image->height());
 	for(int i = 0; i < image->width(); ++i) {
 		for(int j = 0; j < image->height(); ++j) {
 			QRgb rgb = image->pixel(i, j);
-			unsigned int gray = qGray(rgb);
-			in[0] = i;
-			in[1] = j;
+#ifdef NORMALIZE_DATA
+			double gray = QColor::fromRgb(rgb).redF();
+#else
+			double gray = QColor::fromRgb(rgb).red();
+#endif
+			in[0] = i * xScale;
+			in[1] = j * yScale;
 			out[0] = gray;
 			trainingSet->addData(in, out);
 		}

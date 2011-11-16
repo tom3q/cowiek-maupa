@@ -36,28 +36,61 @@ double SupervisorThread::getImageAndError()
 	double errSum, maxErrSum;
 
 	errSum = 0;
-
+#ifdef NORMALIZE_DATA
+	const double xScale = 1.0f / image_->width();
+	const double yScale = 1.0f / image_->height();
+	const double outMin = 0.0f;
+	const double outMax = 1.0f;
+#else
+	const double xScale = 1.0f;
+	const double yScale = 1.0f;
+	const double outMin = 0.0f;
+	const double outMax = 255.0f;
+#endif
 	for (int y = 0; y < image_->height(); ++y) {
 		for (int x = 0; x < image_->width(); ++x) {
 			double err, maxErr;
 
-			in[0] = x;
-			in[1] = y;
+			in[0] = x * xScale;
+			in[1] = y * yScale;
 			out = net_->getOutput(in);
 
+			double tmp = out[0];
+			if (tmp > outMax)
+				tmp = outMax;
+			if (tmp < outMin)
+				tmp = outMin;
+
 			QColor pix(image_->pixel(x, y));
-			maxErr = max(255 - pix.red(), pix.red());
-			err = out[0] - pix.red();
+#ifdef NORMALIZE_DATA
+			double gray = pix.redF();
+#else
+			double gray = pix.red();
+#endif
+#if 0
+			maxErr = max(outMax - gray, gray);
+			err = tmp - gray;
 
 			errSum += (fabs(err))/(maxErr);
-
-			img->setPixel(x, y, qRgb(out[0], out[0], out[0]));
+#else
+			if (fabs(tmp - gray) / gray >= 0.05f)
+				++errSum;
+#endif
+#ifdef NORMALIZE_DATA
+			img->setPixel(x, y, qRgb(tmp*255, tmp*255, tmp*255));
+#else
+			img->setPixel(x, y, qRgb(tmp, tmp, tmp));
+#endif
 		}
 	}
 
 	emit setImage(img);
 
+#ifdef NORMALIZE_DATA
+	return errSum * xScale * yScale;
+#else
 	return errSum / (image_->width()*image_->height());
+#endif
 }
 
 void SupervisorThread::run()

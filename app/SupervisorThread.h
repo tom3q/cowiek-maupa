@@ -7,6 +7,8 @@
 #include "libneural\NeuralNetwork.h"
 #include "libneural\TrainingSet.h"
 
+#define NORMALIZE_DATA
+
 class SupervisorThread : public QThread
 {
 	Q_OBJECT
