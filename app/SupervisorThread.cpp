@@ -1,6 +1,7 @@
 #include "SupervisorThread.h"
 #include <QImage>
 #include <QColor>
+#include <limits>
 
 SupervisorThread::SupervisorThread(const QImage &image, QObject *parent) :
 	QThread(parent), image_(&image)
@@ -17,7 +18,7 @@ SupervisorThread::~SupervisorThread()
 void SupervisorThread::init()
 {
 	epochs = 0;
-	lastError = 0;
+	lastError = std::numeric_limits<double>::infinity();
 	dead = 0;
 	randomized = 0;
 }
