@@ -199,11 +199,7 @@ void MainWindow::prepareTrainingSet(QImage *image)
 	for(int i = 0; i < image->width(); ++i) {
 		for(int j = 0; j < image->height(); ++j) {
 			QRgb rgb = image->pixel(i, j);
-#ifdef NORMALIZE_DATA
-			double gray = QColor::fromRgb(rgb).redF();
-#else
 			double gray = QColor::fromRgb(rgb).red();
-#endif
 			in[0] = i * xScale;
 			in[1] = j * yScale;
 			out[0] = gray;

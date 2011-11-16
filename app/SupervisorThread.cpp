@@ -39,14 +39,12 @@ double SupervisorThread::getImageAndError()
 #ifdef NORMALIZE_DATA
 	const double xScale = 1.0f / image_->width();
 	const double yScale = 1.0f / image_->height();
-	const double outMin = 0.0f;
-	const double outMax = 1.0f;
 #else
 	const double xScale = 1.0f;
 	const double yScale = 1.0f;
+#endif
 	const double outMin = 0.0f;
 	const double outMax = 255.0f;
-#endif
 	for (int y = 0; y < image_->height(); ++y) {
 		for (int x = 0; x < image_->width(); ++x) {
 			double err, maxErr;
@@ -62,11 +60,8 @@ double SupervisorThread::getImageAndError()
 				tmp = outMin;
 
 			QColor pix(image_->pixel(x, y));
-#ifdef NORMALIZE_DATA
-			double gray = pix.redF();
-#else
+
 			double gray = pix.red();
-#endif
 #if 0
 			maxErr = max(outMax - gray, gray);
 			err = tmp - gray;
@@ -76,11 +71,7 @@ double SupervisorThread::getImageAndError()
 			if (fabs(tmp - gray) / gray >= 0.05f)
 				++errSum;
 #endif
-#ifdef NORMALIZE_DATA
-			img->setPixel(x, y, qRgb(tmp*255, tmp*255, tmp*255));
-#else
 			img->setPixel(x, y, qRgb(tmp, tmp, tmp));
-#endif
 		}
 	}
 
