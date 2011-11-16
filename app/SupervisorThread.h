@@ -40,7 +40,7 @@ private:
 	int dead;
 	int randomized;
 	int epochs;
-	double lastError;
+	double minError;
 	NeuralNetwork *net_;
 	RPROPSupervisor supervisor;
 	const QImage *image_;

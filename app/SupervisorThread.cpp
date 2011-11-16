@@ -18,7 +18,7 @@ SupervisorThread::~SupervisorThread()
 void SupervisorThread::init()
 {
 	epochs = 0;
-	lastError = std::numeric_limits<double>::infinity();
+	minError = std::numeric_limits<double>::infinity();
 	dead = 0;
 	randomized = 0;
 }
@@ -86,7 +86,7 @@ double SupervisorThread::getImageAndError()
 
 void SupervisorThread::run()
 {
-	const double errorDelta = 0.001, deadCount = 10;
+	const double errorDelta = 0.001, deadCount = 100;
 	double error;
 
 	do {
@@ -97,22 +97,22 @@ void SupervisorThread::run()
 		if (error < 0.001)
 			break;
 
-
-		if (abs(error - lastError) < errorDelta) {
-			dead++;
-			if (dead == deadCount) {
-				net_->randomizeConnections(5.0);
-				dead = epochs = 0;
-				randomized++;
-			}
-		}
-		else {
+		if (minError - error > errorDelta) {
+			minError = error;
 			dead = 0;
-			lastError = error;
+		}
+
+		if (dead == deadCount) {
+			minError = std::numeric_limits<double>::infinity();
+			net_->randomizeConnections(5.0f);
+			dead = 0;
+			epochs = -1;
+			randomized++;
 		}
 
 		++epochs;
 		emit setEpoch(epochs);
+		++dead;
 	}
 	while(!stopped);
 }
