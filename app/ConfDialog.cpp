@@ -92,7 +92,7 @@ void ConfDialog::setProperties()
 	QPalette p = ui.aEdit->palette();
 	p.setColor(QPalette::Base, QColor(255,255,255));
 	ui.aEdit->setPalette(p);
-	if(ui.aEdit->text().isEmpty() || ui.aEdit->text().toInt() <= 0) {
+	if(ui.aEdit->text().isEmpty() || ui.aEdit->text().toDouble() <= 0.0) {
 		QPalette p = ui.aEdit->palette();
 		p.setColor(QPalette::Base, QColor(255,0,0));
 		ui.aEdit->setPalette(p);
@@ -101,7 +101,7 @@ void ConfDialog::setProperties()
 	p = ui.bEdit->palette();
 	p.setColor(QPalette::Base, QColor(255,255,255));
 	ui.bEdit->setPalette(p);
-	if(ui.bEdit->text().isEmpty() || ui.bEdit->text().toInt() <= 0) {
+	if(ui.bEdit->text().isEmpty() || ui.bEdit->text().toDouble() <= 0.0) {
 		p = ui.bEdit->palette();
 		p.setColor(QPalette::Base, QColor(255,0,0));
 		ui.bEdit->setPalette(p);
@@ -110,7 +110,7 @@ void ConfDialog::setProperties()
 	p = ui.nMaxEdit->palette();
 	p.setColor(QPalette::Base, QColor(255,255,255));
 	ui.nMaxEdit->setPalette(p);
-	if(ui.nMaxEdit->text().isEmpty() || ui.nMaxEdit->text().toInt() <= 0) {
+	if(ui.nMaxEdit->text().isEmpty() || ui.nMaxEdit->text().toDouble() <= 0.0) {
 		p = ui.nMaxEdit->palette();
 		p.setColor(QPalette::Base, QColor(255,0,0));
 		ui.nMaxEdit->setPalette(p);
@@ -119,7 +119,7 @@ void ConfDialog::setProperties()
 	p = ui.nMinEdit->palette();
 	p.setColor(QPalette::Base, QColor(255,255,255));
 	ui.nMinEdit->setPalette(p);
-	if(ui.nMinEdit->text().isEmpty() || ui.nMinEdit->text().toInt() <= 0) {
+	if(ui.nMinEdit->text().isEmpty() || ui.nMinEdit->text().toDouble() <= 0.0) {
 		p = ui.nMinEdit->palette();
 		p.setColor(QPalette::Base, QColor(255,0,0));
 		ui.nMinEdit->setPalette(p);
@@ -129,10 +129,10 @@ void ConfDialog::setProperties()
 	if(badField)
 		return;
 
-	properties.a = ui.aEdit->text().toInt();
-	properties.b = ui.bEdit->text().toInt();
-	properties.nMax = ui.nMaxEdit->text().toInt();
-	properties.nMin = ui.nMinEdit->text().toInt();
+	properties.a = ui.aEdit->text().toDouble();
+	properties.b = ui.bEdit->text().toDouble();
+	properties.nMax = ui.nMaxEdit->text().toDouble();
+	properties.nMin = ui.nMinEdit->text().toDouble();
 
 	properties.layers.clear();
 	for(int i = 1; i < ui.tableWidget->rowCount(); ++i) {

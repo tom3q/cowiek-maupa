@@ -21,17 +21,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) : QMainWindow(parent, 
 
 MainWindow::~MainWindow()
 {
-	delete properties;
-	delete originalScene;
-	delete restoredScene;
-	delete image;
 	thread->stop();
 	thread->wait();
 	delete thread;
+	delete properties;
+	delete originalScene;
+	delete restoredScene;
 	if(net)
 		delete net;
 	if(trainingSet)
 		delete trainingSet;
+	delete image;
 	delete restoredImage_;
 }
 
@@ -137,6 +137,10 @@ void MainWindow::play()
 	if(!threadReady) {
 		thread->setNeuralNetwork(*net);
 		thread->setTrainingSet(*trainingSet);
+		thread->setA(np.a);
+		thread->setB(np.b);
+		thread->setNMax(np.nMax);
+		thread->setNMin(np.nMin);
 	}
 
 	ui.playButton->setText("Pause");
