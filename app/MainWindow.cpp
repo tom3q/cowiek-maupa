@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) : QMainWindow(parent, 
 	connect(ui.stepButton, SIGNAL(clicked()), this, SLOT(step()));
 	connect(thread, SIGNAL(setEpoch(int)), this, SLOT(setEpoch(int)));
 	connect(thread, SIGNAL(setError(double)), this, SLOT(setError(double)));
+	connect(thread, SIGNAL(setImage(QImage *)), this, SLOT(setRestoredImage(QImage *)));
 }
 
 MainWindow::~MainWindow()
@@ -31,6 +32,7 @@ MainWindow::~MainWindow()
 		delete net;
 	if(trainingSet)
 		delete trainingSet;
+	delete restoredImage_;
 }
 
 void MainWindow::init()
@@ -47,6 +49,7 @@ void MainWindow::init()
 
 	net = NULL;
 	trainingSet = NULL;
+	restoredImage_ = NULL;
 	imageLoaded = false;
 	netCreated = false;
 	threadReady = false;
@@ -73,6 +76,9 @@ void MainWindow::editNetwork()
 	setEpoch(0);
 	setError(0);
 	thread->init();
+	restoredScene->clear();
+	delete restoredImage_;
+	restoredImage_ = 0;
 
 	netCreated = true;
 	threadReady = false;
@@ -98,6 +104,9 @@ void MainWindow::loadPicture()
 	setEpoch(0);
 	setError(0);
 	thread->init();
+	restoredScene->clear();
+	delete restoredImage_;
+	restoredImage_ = 0;
 
 	imageLoaded = true;
 	threadReady = false;
@@ -142,8 +151,7 @@ void MainWindow::step()
 {
 	thread->setStopped(true);
 	thread->start();
-
-	drawTheSHIT();
+	thread->wait();
 }
 
 void MainWindow::pause()
@@ -153,8 +161,7 @@ void MainWindow::pause()
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	ui.stepButton->setEnabled(true);
 	thread->stop();
-
-	drawTheSHIT();
+	thread->wait();
 }
 
 void MainWindow::setEpoch(int n)
@@ -190,22 +197,13 @@ void MainWindow::prepareTrainingSet(QImage *image)
 	}
 }
 
-void MainWindow::drawTheSHIT()
+void MainWindow::setRestoredImage(QImage *img)
 {
-	// wypieprzcie to!
-	// Tolkjen
-	QImage img(imageWidth_, imageHeight_, QImage::Format_RGB32);
-	std::vector<double> in(2, 0), out(1, 0);
-	for (int x=0; x<imageWidth_; ++x)
-		for (int y=0; y<imageHeight_; ++y) {
-			in[0] = x;
-			in[1] = y;
-			out = net->getOutput(in);
+	delete restoredImage_;
 
-			int gray = (int) out[0];
-			img.setPixel(x, y, qRgb(gray, gray, gray));
-		}
-	QPixmap pixels = QPixmap::fromImage(img);
+	restoredImage_ = img;
+
+	QPixmap pixels = QPixmap::fromImage(*img);
 	restoredScene->clear();
 	restoredScene->addPixmap(pixels);
 }

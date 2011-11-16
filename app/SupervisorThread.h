@@ -26,6 +26,7 @@ public:
 signals:
 	void setEpoch(int);
 	void setError(double);
+	void setImage(QImage *);
 
 private:
 	bool stopped;

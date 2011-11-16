@@ -27,6 +27,7 @@ private slots:
 	void pause();
 	void setEpoch(int n);
 	void setError(double);
+	void setRestoredImage(QImage *);
 
 private:
 	Ui::MainWindowClass ui;
@@ -35,6 +36,7 @@ private:
 	ConfDialog *properties;
 	SupervisorThread *thread;
 	QImage *image;
+	QImage *restoredImage_;
 	bool imageLoaded;
 	bool netCreated;
 	bool threadReady;
@@ -49,8 +51,6 @@ private:
 	void convertToGrayscale(QImage *image);
 	void prepareTrainingSet(QImage *image);
 	void stopThread();
-
-	void drawTheSHIT();
 };
 
 #endif // MAINWINDOW_H

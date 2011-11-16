@@ -31,6 +31,7 @@ T max(const T &a, const T &b)
 
 double SupervisorThread::getImageAndError()
 {
+	QImage *img = new QImage(image_->width(), image_->height(), QImage::Format_RGB32);
 	std::vector<double> in(2, 0), out;
 	double errSum, maxErrSum;
 
@@ -49,8 +50,12 @@ double SupervisorThread::getImageAndError()
 			err = out[0] - pix.red();
 
 			errSum += (fabs(err))/(maxErr);
+
+			img->setPixel(x, y, qRgb(out[0], out[0], out[0]));
 		}
 	}
+
+	emit setImage(img);
 
 	return errSum / (image_->width()*image_->height());
 }
