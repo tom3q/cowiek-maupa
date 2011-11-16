@@ -31,7 +31,7 @@ public:
 	void setNMin(double nMin);
 
 signals:
-	void setEpoch(int);
+	void setEpoch(int, int, double);
 	void setError(double);
 	void setImage(QImage *);
 

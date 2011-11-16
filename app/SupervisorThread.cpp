@@ -111,7 +111,7 @@ void SupervisorThread::run()
 		}
 
 		++epochs;
-		emit setEpoch(epochs);
+		emit setEpoch(epochs, 100 - dead, minError);
 		++dead;
 	}
 	while(!stopped);

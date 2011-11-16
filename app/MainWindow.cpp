@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) : QMainWindow(parent, 
 	connect(ui.editNetworkButton, SIGNAL(clicked()), this, SLOT(editNetwork()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	connect(ui.stepButton, SIGNAL(clicked()), this, SLOT(step()));
-	connect(thread, SIGNAL(setEpoch(int)), this, SLOT(setEpoch(int)));
+	connect(thread, SIGNAL(setEpoch(int, int, double)), this, SLOT(setEpoch(int, int, double)));
 	connect(thread, SIGNAL(setError(double)), this, SLOT(setError(double)));
 	connect(thread, SIGNAL(setImage(QImage *)), this, SLOT(setRestoredImage(QImage *)));
 }
@@ -73,7 +73,7 @@ void MainWindow::editNetwork()
 	for(QLinkedList<Layer>::const_iterator it = np.layers.begin(); it != np.layers.end(); ++it)
 		net->addLayer((*it).neuronCount, (*it).activationFunction);
 
-	setEpoch(0);
+	setEpoch(0, 0, 0);
 	setError(0);
 	thread->init();
 	restoredScene->clear();
@@ -101,7 +101,7 @@ void MainWindow::loadPicture()
 	prepareTrainingSet(image);
 	originalScene->clear();
 	originalScene->addPixmap(QPixmap::fromImage(*image));
-	setEpoch(0);
+	setEpoch(0, 0, 0);
 	setError(0);
 	thread->init();
 	restoredScene->clear();
@@ -168,9 +168,11 @@ void MainWindow::pause()
 	thread->wait();
 }
 
-void MainWindow::setEpoch(int n)
+void MainWindow::setEpoch(int n, int deathCounter, double minError)
 {
 	ui.epochDisplay->display(n);
+	ui.deathCounter->setText(QString::number(deathCounter));
+	ui.minimumError->setText(QString::number(minError));
 }
 
 void MainWindow::setError(double err)
