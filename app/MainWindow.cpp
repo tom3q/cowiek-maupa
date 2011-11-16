@@ -43,7 +43,7 @@ void MainWindow::init()
 	ui.originalView->setScene(originalScene);
 	ui.restoredView->setScene(restoredScene);
 	properties = new ConfDialog();
-	thread = new SupervisorThread();
+	thread = new SupervisorThread(*image);
 
 	net = NULL;
 	trainingSet = NULL;
