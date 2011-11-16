@@ -62,11 +62,11 @@ double SupervisorThread::getImageAndError()
 			QColor pix(image_->pixel(x, y));
 
 			double gray = pix.red();
-#if 0
+#if 1
 			maxErr = max(outMax - gray, gray);
 			err = tmp - gray;
 
-			errSum += (fabs(err))/(maxErr);
+			errSum += (err*err)/(maxErr*maxErr);
 #else
 			if (fabs(tmp - gray) / gray >= 0.05f)
 				++errSum;
