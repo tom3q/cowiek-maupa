@@ -4,6 +4,7 @@
 #include <QRgb>
 #include <vector>
 #include "NetworkProperties.h"
+#include "version.h"
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) : QMainWindow(parent, flags)
 {
@@ -53,6 +54,11 @@ void MainWindow::init()
 	imageLoaded = false;
 	netCreated = false;
 	threadReady = false;
+
+	QString title = windowTitle();
+	title.append(" ");
+	title.append(VERSION);
+	setWindowTitle(title);
 }
 
 void MainWindow::editNetwork()
