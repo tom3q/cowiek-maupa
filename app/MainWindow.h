@@ -51,6 +51,7 @@ private:
 	void convertToGrayscale(QImage *image);
 	void prepareTrainingSet(QImage *image);
 	void stopThread();
+	int prepareThread();
 };
 
 #endif // MAINWINDOW_H

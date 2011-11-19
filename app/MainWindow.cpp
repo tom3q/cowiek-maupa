@@ -125,23 +125,8 @@ void MainWindow::convertToGrayscale(QImage *image)
 
 void MainWindow::play()
 {
-	if(!netCreated)
-		editNetwork();
-
-	if(!imageLoaded)
-		loadPicture();
-
-	if(!imageLoaded || !netCreated)
+	if(prepareThread())
 		return;
-
-	if(!threadReady) {
-		thread->setNeuralNetwork(*net);
-		thread->setTrainingSet(*trainingSet);
-		thread->setA(np.a);
-		thread->setB(np.b);
-		thread->setNMax(np.nMax);
-		thread->setNMin(np.nMin);
-	}
 
 	ui.playButton->setText("Pause");
 	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
@@ -153,6 +138,9 @@ void MainWindow::play()
 
 void MainWindow::step()
 {
+	if(prepareThread())
+		return;
+
 	thread->setStopped(true);
 	thread->start();
 	thread->wait();
@@ -230,4 +218,27 @@ void MainWindow::stopThread()
 	ui.stepButton->setEnabled(true);
 	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(pause()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
+}
+
+int MainWindow::prepareThread()
+{
+	if(!netCreated)
+		editNetwork();
+
+	if(!imageLoaded)
+		loadPicture();
+
+	if(!imageLoaded || !netCreated)
+		return 1;
+
+	if(!threadReady) {
+		thread->setNeuralNetwork(*net);
+		thread->setTrainingSet(*trainingSet);
+		thread->setA(np.a);
+		thread->setB(np.b);
+		thread->setNMax(np.nMax);
+		thread->setNMin(np.nMin);
+	}
+
+	return 0;
 }
