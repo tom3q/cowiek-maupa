@@ -97,7 +97,7 @@ void SupervisorThread::run()
 		if (error < 0.001)
 			break;
 
-		if (minError - error > errorDelta) {
+		if (minError > error) {
 			minError = error;
 			dead = 0;
 		}

@@ -192,8 +192,8 @@ void MainWindow::prepareTrainingSet(QImage *image)
 	const double yScale = 1.0f;
 #endif
 	trainingSet->reserve(image->width() * image->height());
-	for(int i = 0; i < image->width(); ++i) {
-		for(int j = 0; j < image->height(); ++j) {
+	for(int i = 0; i < image->width(); i += 2) {
+		for(int j = 0; j < image->height(); j += 2) {
 			QRgb rgb = image->pixel(i, j);
 			double gray = QColor::fromRgb(rgb).red();
 			in[0] = i * xScale;
@@ -244,6 +244,7 @@ int MainWindow::prepareThread()
 		thread->setB(np.b);
 		thread->setNMax(np.nMax);
 		thread->setNMin(np.nMin);
+		threadReady = true;
 	}
 
 	return 0;
