@@ -9,11 +9,13 @@ SupervisorThread::SupervisorThread(const QImage &image, QObject *parent) :
 {
 	stopped = true;
 	setTerminationEnabled(true);
+	queue = new MedQueue(10, 50);
 	init();
 }
 
 SupervisorThread::~SupervisorThread()
 {
+	delete queue;
 }
 
 void SupervisorThread::init()
@@ -79,7 +81,7 @@ double SupervisorThread::getImageAndError()
 
 void SupervisorThread::run()
 {
-	const double errorDelta = 0.002, errorEps = 0.1;
+	const double errorDelta = 0.002, errorEps = 0.10;
 	double error;
 
 	do {
@@ -92,15 +94,15 @@ void SupervisorThread::run()
 		if (error < errorEps)
 			break;
 
-		queue.push(error);
-		if (queue.check(errorDelta)) {
-			queue.clear();
+		queue->push(error);
+		if (queue->check(errorDelta)) {
+			queue->clear();
 			net_->randomizeConnections(5.0f);
 			epochs = 0;
 			randomized++;
 		}
 
-		emit setEpoch(epochs, queue.median());
+		emit setEpoch(epochs, queue->median());
 	}
 	while(!stopped);
 }

@@ -44,7 +44,7 @@ private:
 	double minError;
 	NeuralNetwork *net_;
 	RPROPSupervisor supervisor;
-	MedQueue queue;
+	MedQueue *queue;
 	const QImage *image_;
 };
 

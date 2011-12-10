@@ -2,6 +2,7 @@
 #include <QtGui/QFileDialog>
 #include <QPixmap>
 #include <QRgb>
+#include <QMessageBox>
 #include <vector>
 #include "NetworkProperties.h"
 #include "version.h"
@@ -9,12 +10,13 @@
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) : QMainWindow(parent, flags)
 {
 	init();
-
+	
 	connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPicture()));
 	connect(ui.editNetworkButton, SIGNAL(clicked()), this, SLOT(editNetwork()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	connect(ui.stepButton, SIGNAL(clicked()), this, SLOT(step()));
+	connect(ui.aboutButton, SIGNAL(clicked()), this, SLOT(about()));
 	connect(thread, SIGNAL(setEpoch(int, double)), this, SLOT(setEpoch(int, double)));
 	connect(thread, SIGNAL(setError(double)), this, SLOT(setError(double)));
 	connect(thread, SIGNAL(setImage(QImage *)), this, SLOT(setRestoredImage(QImage *)));
@@ -160,6 +162,14 @@ void MainWindow::pause()
 	ui.stepButton->setEnabled(true);
 	thread->stop();
 	thread->wait();
+}
+
+void MainWindow::about() 
+{
+	QMessageBox msg;
+	msg.setText(QString::fromUtf16(L"cowiek-maupa %1\n\nAdapts neural network to match a given grayscale image.\n\nPiotr T¹kiel\nJakub Sejdak\n\Tomasz Figa").arg(VERSION));
+	msg.setIcon(QMessageBox::Information);
+	msg.exec();
 }
 
 void MainWindow::setEpoch(int n, double minError)
