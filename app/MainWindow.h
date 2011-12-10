@@ -26,6 +26,7 @@ private slots:
 	void step();
 	void pause();
 	void about();
+	void finished();
 	void setEpoch(int, double);
 	void setError(double);
 	void setRestoredImage(QImage *);

@@ -35,6 +35,7 @@ signals:
 	void setEpoch(int, double);
 	void setError(double);
 	void setImage(QImage *);
+	void finished();
 
 private:
 	bool stopped;

@@ -105,6 +105,8 @@ void SupervisorThread::run()
 		emit setEpoch(epochs, queue->median());
 	}
 	while(!stopped);
+
+	emit finished();
 }
 
 void SupervisorThread::stop()

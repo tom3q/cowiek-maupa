@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags) : QMainWindow(parent, 
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	connect(ui.stepButton, SIGNAL(clicked()), this, SLOT(step()));
 	connect(ui.aboutButton, SIGNAL(clicked()), this, SLOT(about()));
+	connect(thread, SIGNAL(finished()), this, SLOT(finished()));
 	connect(thread, SIGNAL(setEpoch(int, double)), this, SLOT(setEpoch(int, double)));
 	connect(thread, SIGNAL(setError(double)), this, SLOT(setError(double)));
 	connect(thread, SIGNAL(setImage(QImage *)), this, SLOT(setRestoredImage(QImage *)));
@@ -140,6 +141,8 @@ void MainWindow::play()
 	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(pause()));
 	ui.stepButton->setEnabled(false);
+	ui.editNetworkButton->setEnabled(false);
+	ui.loadButton->setEnabled(false);
 	thread->setStopped(false);
 	thread->start();
 }
@@ -149,6 +152,11 @@ void MainWindow::step()
 	if(prepareThread())
 		return;
 
+	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
+	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(pause()));
+	ui.stepButton->setEnabled(false);
+	ui.editNetworkButton->setEnabled(false);
+	ui.loadButton->setEnabled(false);
 	thread->setStopped(true);
 	thread->start();
 	thread->wait();
@@ -160,6 +168,8 @@ void MainWindow::pause()
 	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(pause()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 	ui.stepButton->setEnabled(true);
+	ui.editNetworkButton->setEnabled(true);
+	ui.loadButton->setEnabled(true);
 	thread->stop();
 	thread->wait();
 }
@@ -172,10 +182,20 @@ void MainWindow::about()
 	msg.exec();
 }
 
-void MainWindow::setEpoch(int n, double minError)
+void MainWindow::finished()
+{
+	ui.playButton->setText("Play");
+	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(pause()));
+	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
+	ui.stepButton->setEnabled(true);
+	ui.editNetworkButton->setEnabled(true);
+	ui.loadButton->setEnabled(true);
+}
+
+void MainWindow::setEpoch(int n, double median)
 {
 	ui.epochDisplay->display(n);
-	ui.minimumError->setText(QString::number(minError));
+	ui.minimumError->setText(QString::number(median));
 }
 
 void MainWindow::setError(double err)
@@ -193,13 +213,10 @@ void MainWindow::prepareTrainingSet(QImage *image)
 	std::vector<double> in, out;
 	in.resize(2, 0);
 	out.resize(1, 0);
-#ifdef NORMALIZE_DATA
+
 	const double xScale = 1.0f / image->width();
 	const double yScale = 1.0f / image->height();
-#else
-	const double xScale = 1.0f;
-	const double yScale = 1.0f;
-#endif
+
 	trainingSet->reserve(image->width() * image->height());
 	for(int i = 0; i < image->width(); i += 2) {
 		for(int j = 0; j < image->height(); j += 2) {
@@ -231,6 +248,8 @@ void MainWindow::stopThread()
 
 	ui.playButton->setText("Play");
 	ui.stepButton->setEnabled(true);
+	ui.editNetworkButton->setEnabled(true);
+	ui.loadButton->setEnabled(true);
 	disconnect(ui.playButton, SIGNAL(clicked()), this, SLOT(pause()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
 }
