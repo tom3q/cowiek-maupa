@@ -243,6 +243,7 @@ int MainWindow::prepareThread()
 		thread->setB(np.b);
 		thread->setNMax(np.nMax);
 		thread->setNMin(np.nMin);
+		threadReady = true;
 	}
 
 	return 0;
