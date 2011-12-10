@@ -2,6 +2,7 @@
 #include <QImage>
 #include <QColor>
 #include <limits>
+#include "MedQueue.h"
 
 SupervisorThread::SupervisorThread(const QImage &image, QObject *parent) :
 	QThread(parent), image_(&image)
@@ -36,18 +37,15 @@ double SupervisorThread::getImageAndError()
 	double errSum, maxErrSum;
 
 	errSum = 0;
-#ifdef NORMALIZE_DATA
+
 	const double xScale = 1.0f / image_->width();
 	const double yScale = 1.0f / image_->height();
-#else
-	const double xScale = 1.0f;
-	const double yScale = 1.0f;
-#endif
 	const double outMin = 0.0f;
 	const double outMax = 255.0f;
+
 	for (int y = 0; y < image_->height(); ++y) {
 		for (int x = 0; x < image_->width(); ++x) {
-			double err, maxErr;
+			double err;
 
 			in[0] = x * xScale;
 			in[1] = y * yScale;
@@ -63,10 +61,10 @@ double SupervisorThread::getImageAndError()
 
 			double gray = pix.red();
 #if 1
-			maxErr = max(outMax - gray, gray);
-			err = tmp - gray;
-
-			errSum += (err*err)/(maxErr*maxErr);
+			err = fabs(tmp - gray);
+			if (err > 127.0f)
+				err = 127.0f;
+			errSum += err / 127.0f;
 #else
 			if (fabs(tmp - gray) / gray >= 0.05f)
 				++errSum;
@@ -76,43 +74,33 @@ double SupervisorThread::getImageAndError()
 	}
 
 	emit setImage(img);
-
-#ifdef NORMALIZE_DATA
 	return errSum * xScale * yScale;
-#else
-	return errSum / (image_->width()*image_->height());
-#endif
 }
 
 void SupervisorThread::run()
 {
-	const double errorDelta = 0.001, deadCount = 100;
+	const double errorDelta = 0.002, errorEps = 0.1;
 	double error;
 
 	do {
-		supervisor.train();
+		epochs++;
 
+		supervisor.train();
 		error = getImageAndError();
 		emit setError(error);
-		if (error < 0.001)
+
+		if (error < errorEps)
 			break;
 
-		if (minError - error > errorDelta) {
-			minError = error;
-			dead = 0;
-		}
-
-		if (dead == deadCount) {
-			minError = std::numeric_limits<double>::infinity();
+		queue.push(error);
+		if (queue.check(errorDelta)) {
+			queue.clear();
 			net_->randomizeConnections(5.0f);
-			dead = 0;
-			epochs = -1;
+			epochs = 0;
 			randomized++;
 		}
 
-		++epochs;
-		emit setEpoch(epochs, 100 - dead, minError);
-		++dead;
+		emit setEpoch(epochs, queue.median());
 	}
 	while(!stopped);
 }

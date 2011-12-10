@@ -290,23 +290,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="deathCounterLabel">
-        <property name="text">
-         <string>Death counter:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="deathCounter">
-        <property name="text">
-         <string>100</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QLabel" name="minimumErrorLabel">
         <property name="text">
-         <string>Minimum error:</string>
+         <string>Median:</string>
         </property>
        </widget>
       </item>

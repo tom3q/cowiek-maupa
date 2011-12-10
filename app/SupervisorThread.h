@@ -6,6 +6,7 @@
 #include "libneural\RPROPSupervisor.h"
 #include "libneural\NeuralNetwork.h"
 #include "libneural\TrainingSet.h"
+#include "MedQueue.h"
 
 #define NORMALIZE_DATA
 
@@ -31,7 +32,7 @@ public:
 	void setNMin(double nMin);
 
 signals:
-	void setEpoch(int, int, double);
+	void setEpoch(int, double);
 	void setError(double);
 	void setImage(QImage *);
 
@@ -43,6 +44,7 @@ private:
 	double minError;
 	NeuralNetwork *net_;
 	RPROPSupervisor supervisor;
+	MedQueue queue;
 	const QImage *image_;
 };
 

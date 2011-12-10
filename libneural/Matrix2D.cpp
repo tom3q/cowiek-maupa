@@ -59,9 +59,9 @@ inline void Matrix2D::multiplyMatrices(Matrix2D &dest, Matrix2D &lhs, Matrix2D &
 {
 	for (int x=0; x<rw; ++x) {
 		for (int y=0; y<lh; ++y) {
-			array_[x + y*rw] = 0;
+			dest.array_[x + y*rw] = 0;
 			for (int i=0; i<lw; ++i) {
-				array_[x + y*rw] +=
+				dest.array_[x + y*rw] +=
 					(double) lhs.array_[i + y*lw] * rhs.array_[x + i*rw];
 			}
 		}
