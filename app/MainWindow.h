@@ -8,8 +8,8 @@
 #include "ui_MainWindow.h"
 #include "ConfDialog.h"
 #include "SupervisorThread.h"
-#include "../libneural/NeuralNetwork.h"
-#include "../libneural/TrainingSet.h"
+#include <NeuralNetwork.h>
+#include <TrainingSet.h>
 
 class MainWindow : public QMainWindow
 {

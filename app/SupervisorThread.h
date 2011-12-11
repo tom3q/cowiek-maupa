@@ -3,9 +3,9 @@
 
 #include <QThread>
 #include <QImage>
-#include "libneural\RPROPSupervisor.h"
-#include "libneural\NeuralNetwork.h"
-#include "libneural\TrainingSet.h"
+#include <RPROPSupervisor.h>
+#include <NeuralNetwork.h>
+#include <TrainingSet.h>
 #include "MedQueue.h"
 
 #define NORMALIZE_DATA
