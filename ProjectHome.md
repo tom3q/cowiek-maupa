@@ -1,0 +1,1 @@
+An academic project to test neural networks ability to store images.
